@@ -26,10 +26,6 @@ public class Utils {
     public static final double MU = 3.986004418e+14; // Gravitation coefficient
     public static final double C_VACUUM = 299792458.0;  // Speed of light in vacuum
 
-    private Utils() {
-
-    }
-
     /**
      * Reads a properties file and loads it into a Properties class
      *
@@ -333,7 +329,7 @@ public class Utils {
     public static OrbitalElements tle2elements(String tle1, String tle2) {
 
         var orbitalElements = new OrbitalElements();
-        SatElset data = null;
+        SatElset data = new SatElset();
         try {
             data = new SatElset(tle1, tle2);
         } catch (SatElsetException see) {
@@ -377,16 +373,14 @@ public class Utils {
 
         if (lat < 0) lat = Math.abs(lat);
 
-        double Hmax = 622000; // FIXME this is hardcoded, it should be (1 + e) * sem-maj axis
+        double hMax = (satellite.getElement("e") + 1) * satellite.getElement("a");
 
-        double etaMax = Math.asin((EARTH_RADIUS_EQ_M * Math.cos(Math.toRadians(th))) / (EARTH_RADIUS_EQ_M + Hmax));
+        double etaMax = Math.asin((EARTH_RADIUS_EQ_M * Math.cos(Math.toRadians(th))) / (EARTH_RADIUS_EQ_M + hMax));
         double lambdaMax = 90 - th - Math.toDegrees(etaMax);
 
         lambdaMax = Math.toRadians(lambdaMax);
 
-        if (lat >= (lambdaMax + inc)) {
-            regions = 0;
-        } else if ((inc + lambdaMax > lat) && (lat >= inc - lambdaMax)) {
+        if ((inc + lambdaMax > lat) && (lat >= inc - lambdaMax)) {
             regions = 1;
         } else {
             regions = 2;
