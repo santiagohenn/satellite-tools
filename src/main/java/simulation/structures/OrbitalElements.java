@@ -21,7 +21,7 @@ public class OrbitalElements {
     /**
      * The class default constructor.
      */
-    public OrbitalElements(){
+    public OrbitalElements() {
 
     }
 
@@ -181,29 +181,6 @@ public class OrbitalElements {
 
     public void setMeanMotionSecondDerivative(double meanMotionSecondDerivative) {
         this.meanMotionSecondDerivative = meanMotionSecondDerivative;
-    }
-
-    // TODO CHECK IF USED
-    public double[] asArray() {
-        double[] elementsAsArray = new double[6];
-        elementsAsArray[0] = this.getSemiMajorAxis();
-        elementsAsArray[1] = this.getEccentricity();
-        elementsAsArray[2] = this.getInclination();
-        elementsAsArray[3] = this.getRightAscension();
-        elementsAsArray[4] = this.getArgOfPerigee();
-        elementsAsArray[5] = this.getAnomaly();
-        return elementsAsArray;
-    }
-
-    // TODO CHECK IF USED
-    public void fromArray(double[] elementsAsArray) {
-        this.semiMajorAxis = elementsAsArray[0];
-        this.eccentricity = elementsAsArray[1];
-        this.inclination = elementsAsArray[2];
-        this.rightAscension = elementsAsArray[3];
-        this.argOfPerigee = elementsAsArray[4];
-        this.anomaly = elementsAsArray[5];
-        this.period = elementsAsArray[6];
     }
 
     public void setTimestamp(String timestamp) {

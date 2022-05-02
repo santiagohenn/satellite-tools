@@ -299,18 +299,6 @@ public class Utils {
     }
 
     /**
-     * Transforms OrbitalElements into a Satellite Object
-     *
-     * @return Satellite
-     */
-    public static Satellite elements2satellite(OrbitalElements elements) {
-        var satellite = new Satellite(elements);
-        var tle = elements2tle(elements.asArray(), elements.getTimestamp());
-        satellite.setTLE(tle.getLine1(), tle.getLine2());
-        return satellite;
-    }
-
-    /**
      * Transforms Two Line Elements into a Satellite Object
      *
      * @return Satellite
