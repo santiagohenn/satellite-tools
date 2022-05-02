@@ -36,6 +36,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Simulation condenses the main entry class for the software. It propagates orbits and output results based on the
+ * configured Satellite object and parameters such as date and reference frames.
+ */
 public class Simulation implements Runnable {
 
     private List<Interval> intervalList;
