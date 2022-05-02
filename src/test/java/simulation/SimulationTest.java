@@ -1,6 +1,7 @@
 package simulation;
 
 import org.junit.Test;
+import simulation.assets.objects.Device;
 import simulation.assets.objects.Satellite;
 import simulation.structures.Ephemeris;
 
@@ -35,8 +36,10 @@ public class SimulationTest {
         satellite.setTLE("1 25544U 98067A   22122.68846215  .00030457  00000-0  54086-3 0  9994",
                 "2 25544  51.6435 201.9265 0006436  54.9097 105.7177 15.49915502338120");
         Simulation simulation = new Simulation(satellite);
+        Device device = new Device(15, 15, 0.3);
+        simulation.setDevice(device);
         Ephemeris ephemeris = simulation.computePVDAt("2025-03-20T12:00:00.000");
-
+        assertNotNull(ephemeris);
     }
 
 }
