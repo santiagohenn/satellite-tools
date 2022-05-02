@@ -326,16 +326,6 @@ public class Utils {
     }
 
     /**
-     * Transforms an array of elements in a,e,i,R.A.A.N.,p.a.,v order into a TLE Object
-     *
-     * @return TLE
-     */
-    public static TLE elements2tle(double[] elements, String time) {
-        return new TLE(0, 'U', Integer.parseInt(time.substring(0, 4)), 0, "A", 0, 0, Utils.stamp2AD(time), computeMeanMotion(elements[0]),
-                0, 0, elements[1], Math.toRadians(elements[2]), Math.toRadians(elements[3]), Math.toRadians(elements[4]), Math.toRadians(elements[5]), 7836, 0.11873e-3);
-    }
-
-    /**
      * Transforms Two Line Elements into an Orbital Elements Object
      *
      * @return TLE
