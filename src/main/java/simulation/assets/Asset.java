@@ -1,6 +1,21 @@
 package simulation.assets;
 
-public class Asset {
+/**
+ * Asset is the abstract class for objects that may participate in
+ * a simulation and share parameters within the scenario. These are:
+ * <ul>
+ * <li> ID
+ * <li> Position (Either in cartesian or polar coordinates)
+ * <li> Visibility Threshold
+ * </ul>
+ * <p>
+ * The ID may be a Name or an Integer value. Position is determined
+ * in either the Geographic Coordinate System (GCS) or an X,Y,Z coordinate
+ * System. Visibility Threshold is a parameter that restricts visibility
+ * to or from a position in the 3D space, useful for several approximations.
+ * <p>
+ */
+public abstract class Asset {
 
     private int id;
     private String name;

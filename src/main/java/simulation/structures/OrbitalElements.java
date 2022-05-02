@@ -1,5 +1,8 @@
 package simulation.structures;
 
+/**
+ * This Class stores a set of orbital elements and some derivatives at a specific moment in time
+ */
 public class OrbitalElements {
 
     private double semiMajorAxis;
@@ -15,10 +18,18 @@ public class OrbitalElements {
     private double meanMotionFirstDerivative;
     private double meanMotionSecondDerivative;
 
-    public OrbitalElements() {
-
-    }
-
+    /**
+     * The class constructor. Takes a timestamp in the YYYY-MM-DDTHH:MM:SS.sss format and each orbital element as a double
+     * value in this order and format:
+     *  <ul>
+     *  <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
+     *  <li> Eccentricity: The orbit's eccentricity
+     *  <li> Inclination: The orbit's inclination in degrees
+     *  <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
+     *  <li> Argument of Perigee: The orbits Argument of Perigee in degrees
+     *  <li> Anomaly: The orbit's true or mean anomaly in degrees
+     *  </ul>
+     */
     public OrbitalElements(String timestamp, double semiMajorAxis, double eccentricity, double inclination, double rightAscension
             , double argOfPerigee, double anomaly) {
         this.timestamp = timestamp;
@@ -30,6 +41,23 @@ public class OrbitalElements {
         this.anomaly = anomaly;
     }
 
+    /**
+     * A class constructor that takes a timestamp in the YYYY-MM-DDTHH:MM:SS.sss format, each orbital element as a double
+     * value, the drag coefficient and both the first and second derivative of the Mean Motion in this order and format:
+     *  <ul>
+     *  <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
+     *  <li> Eccentricity: The orbit's eccentricity
+     *  <li> Inclination: The orbit's inclination in degrees
+     *  <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
+     *  <li> Argument of Perigee: The orbits Argument of Perigee in degrees
+     *  <li> Anomaly: The orbit's true or mean anomaly in degrees
+     *  <li> Drag coefficient (B STAR) in radii^-1
+     *  <li> Mean motion first derivative in revs/day
+     *  <li> Mean motion second derivative in revs/day^3
+     *  </ul>
+     *
+     * @see <a href="http://spaceflight.nasa.gov/realdata/sightings/SSapplications/Post/JavaSSOP/SSOP_Help/tle_def.html">NORAD TLE</a>
+     */
     public OrbitalElements(String timestamp, double semiMajorAxis, double eccentricity, double inclination, double rightAscension
             , double argOfPerigee, double anomaly, double dragCoefficient, double meanMotionFirstDerivative, double meanMotionSecondDerivative) {
         this.timestamp = timestamp;
@@ -148,6 +176,7 @@ public class OrbitalElements {
         this.meanMotionSecondDerivative = meanMotionSecondDerivative;
     }
 
+    // TODO CHECK IF USED
     public double[] asArray() {
         double[] elementsAsArray = new double[6];
         elementsAsArray[0] = this.getSemiMajorAxis();
@@ -159,6 +188,7 @@ public class OrbitalElements {
         return elementsAsArray;
     }
 
+    // TODO CHECK IF USED
     public void fromArray(double[] elementsAsArray) {
         this.semiMajorAxis = elementsAsArray[0];
         this.eccentricity = elementsAsArray[1];
