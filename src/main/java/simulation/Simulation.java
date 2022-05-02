@@ -54,10 +54,9 @@ public class Simulation implements Runnable {
     private double th;
     private Frame inertialFrame;
     private BodyShape earth;
-    private GeodeticPoint geodeticPoint;
     private TopocentricFrame topocentricFrame;
     private TLEPropagator tlePropagator;
-    private final double TH_DETECTION = 0.001; // 1 ms default
+    private static final double TH_DETECTION = 0.001; // 1 ms default
     private Date contact = new Date();
     private double lastSimTime = 0;
 
@@ -182,6 +181,10 @@ public class Simulation implements Runnable {
         return this.satellite.getId();
     }
 
+    public double getThDetection() {
+        return TH_DETECTION;
+    }
+
     public List<Interval> getIntervals() {
         return intervalList;
     }
@@ -201,7 +204,7 @@ public class Simulation implements Runnable {
 
     public void setDevice(Device device) {
         this.device = device;
-        this.geodeticPoint = new GeodeticPoint(device.getLatRad(), device.getLonRad(), device.getHeight());
+        GeodeticPoint geodeticPoint = new GeodeticPoint(device.getLatRad(), device.getLonRad(), device.getHeight());
         this.topocentricFrame = new TopocentricFrame(earth, geodeticPoint, device.getName());
     }
 
@@ -236,7 +239,7 @@ public class Simulation implements Runnable {
                 withConstantElevation(th).
                 withHandler(
                         (s, detector, increasing) -> {
-                            addInterval(s, detector, increasing);
+                            addInterval(s, increasing);
                             return Action.CONTINUE;
                         });
 
@@ -251,7 +254,7 @@ public class Simulation implements Runnable {
         tlePropagator.propagate(time1, time1.shiftedBy(scenarioTime));
     }
 
-    private void addInterval(SpacecraftState s, ElevationDetector detector, boolean dir) {
+    private void addInterval(SpacecraftState s, boolean dir) {
         try {
             if (dir) {
                 contact = s.getDate().toDate(TimeScalesFactory.getUTC());
@@ -272,8 +275,9 @@ public class Simulation implements Runnable {
         computePVDBetween(startTime, endTime, this.step);
     }
 
+    // FIXME needs rework
     public void computePVDBetween(long startTime, long endTime, double stepInSeconds) {
-        computePVDBetween(Utils.unix2stamp(startTime), Utils.unix2stamp(endTime), stepInSeconds);   // FIXME needs rework
+        computePVDBetween(Utils.unix2stamp(startTime), Utils.unix2stamp(endTime), stepInSeconds);
     }
 
     public void computePVDBetween(String startTime, String endTime) {
@@ -284,26 +288,19 @@ public class Simulation implements Runnable {
         propagateAndComputePVD(Utils.stamp2AD(startTime), Utils.stamp2AD(endTime), stepInSeconds);
     }
 
-    public Ephemeris computePVDAt(String timestamp) {
-        return computePVDAt(Utils.stamp2unix(timestamp));
-    }
-
-    public Ephemeris computePVDAt(long timestamp) {
-        return computePVDAt(Utils.unix2stamp(timestamp), this.step);
-    }
-
     public Ephemeris computePVDAt(long timestamp, double step) {
-        return computePVDAt(Utils.unix2stamp(timestamp), step);
+        this.step = step;
+        return computePVDAt(Utils.unix2stamp(timestamp));
     }
 
-    public Ephemeris computePVDAt(String timestamp, double step) {
-        return computePVDAt(Utils.stamp2AD(timestamp), step);
+    public Ephemeris computePVDAt(String timestamp) {
+        return computePVDAt(Utils.stamp2AD(timestamp));
     }
 
-    public Ephemeris computePVDAt(AbsoluteDate fixedDate, double step) {
-        PVCoordinates pvInert = tlePropagator.propagate(fixedDate).getPVCoordinates();
-        var pvCoordinates = inertialFrame.getTransformTo(topocentricFrame, fixedDate).transformPVCoordinates(pvInert);
-        return toEphemeris(fixedDate, pvCoordinates);
+    public Ephemeris computePVDAt(AbsoluteDate absoluteDate) {
+        PVCoordinates pvInert = tlePropagator.propagate(absoluteDate).getPVCoordinates();
+        var pvCoordinates = inertialFrame.getTransformTo(topocentricFrame, absoluteDate).transformPVCoordinates(pvInert);
+        return toEphemeris(absoluteDate, pvCoordinates);
     }
 
     @SuppressWarnings("squid:S2184")
@@ -328,20 +325,6 @@ public class Simulation implements Runnable {
 
         }
         lastSimTime = System.currentTimeMillis() - t0;
-    }
-
-    public void computeSSPAt(AbsoluteDate absoluteDate) {
-
-        PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
-        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
-
-        Frame bodyFrame = earth.getBodyFrame();
-        Transform t = inertialFrame.getTransformTo(bodyFrame, timeStampedPVCoordinates.getDate());
-        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
-
-        double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
-        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
-
     }
 
     public Ephemeris computeSSPAndGetEphemeris(AbsoluteDate absoluteDate) {
@@ -382,23 +365,6 @@ public class Simulation implements Runnable {
 
         return new Ephemeris(date.getTime(), this.getDeviceId(), this.getSatelliteId(), pos.getX(), pos.getY(),
                 pos.getZ(), vel.getX(), vel.getY(), vel.getZ(), range, doppler);
-    }
-
-    private void addEphemeris(Date date, PVCoordinates pvDevice) {
-
-        // Get the satellite's position and velocity in reference to the station
-        Vector3D pos = pvDevice.getPosition();
-        Vector3D vel = pvDevice.getVelocity();
-
-        // Calculate Range
-        double range = pvDevice.getPosition().getNorm();
-
-        // Calculate the doppler signal
-        double doppler = Vector3D.dotProduct(pvDevice.getPosition(), pvDevice.getVelocity()) / range;
-
-        var ephemeris = new Ephemeris(date.getTime(), this.getDeviceId(), this.getSatelliteId(), pos.getX(), pos.getY(),
-                pos.getZ(), vel.getX(), vel.getY(), vel.getZ(), range, doppler);
-        ephemerisList.add(ephemeris);
     }
 
     public List<Ephemeris> getEphemerisList() {
