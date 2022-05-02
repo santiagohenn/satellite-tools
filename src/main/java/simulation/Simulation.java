@@ -224,6 +224,7 @@ public class Simulation implements Runnable {
         return sum;
     }
 
+    @SuppressWarnings("squid:S2184")
     public void computeAccess() {
 
         long t0 = System.currentTimeMillis();
@@ -250,7 +251,7 @@ public class Simulation implements Runnable {
         tlePropagator.propagate(time1, time1.shiftedBy(scenarioTime));
     }
 
-    private void addInterval(SpacecraftState s, ElevationDetector detector, boolean dir) { // TODO remove detector and add last contact within simulation end case
+    private void addInterval(SpacecraftState s, ElevationDetector detector, boolean dir) {
         try {
             if (dir) {
                 contact = s.getDate().toDate(TimeScalesFactory.getUTC());
@@ -305,6 +306,7 @@ public class Simulation implements Runnable {
         return toEphemeris(fixedDate, pvCoordinates);
     }
 
+    @SuppressWarnings("squid:S2184")
     private void propagateAndComputePVD(AbsoluteDate startDate, AbsoluteDate endDate, double step) {
 
         long t0 = System.currentTimeMillis();
@@ -317,7 +319,6 @@ public class Simulation implements Runnable {
             var pvDevice = inertialFrame.getTransformTo(topocentricFrame, pointerDate).transformPVCoordinates(pvInert);
 
             addEphemeris(pointerDate, pvDevice);
-//            addEphemeris(pointerDate.toDate(TimeScalesFactory.getUTC()), pvDevice);
             pointerDate = pointerDate.shiftedBy(step);
 
             if (pointerDate.compareTo(endDate) > 0 && !lastPoint) {
@@ -341,9 +342,6 @@ public class Simulation implements Runnable {
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta =  timeStampedPVCoordinates.getPosition().getDelta();
 
-        System.out.println("x: " + alpha + " y: " + delta);
-        System.out.println("x: " + Math.toDegrees(alpha) + " y: " + Math.toDegrees(delta));
-
     }
 
     public Ephemeris computeSSPAndGetEphemeris(AbsoluteDate absoluteDate) {
@@ -357,9 +355,6 @@ public class Simulation implements Runnable {
 
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta =  timeStampedPVCoordinates.getPosition().getDelta();
-//
-//        System.out.println("x: " + alpha + " y: " + delta);
-//        System.out.println("x: " + Math.toDegrees(alpha) + " y: " + Math.toDegrees(delta));
 
         return new Ephemeris(this.satellite.getId(), Math.toDegrees(delta), Math.toDegrees(alpha));
 
