@@ -19,6 +19,13 @@ public class OrbitalElements {
     private double meanMotionSecondDerivative;
 
     /**
+     * The class default constructor.
+     */
+    public OrbitalElements(){
+
+    }
+
+    /**
      * The class constructor. Takes a timestamp in the YYYY-MM-DDTHH:MM:SS.sss format and each orbital element as a double
      * value in this order and format:
      *  <ul>
