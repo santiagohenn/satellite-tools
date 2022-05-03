@@ -65,14 +65,17 @@ public class Simulation implements Runnable {
     }
 
     /**
-     * A Class constructor that gets the Position and Velocity coordinates for a Satellite, with its cartesian coordinates
-     * in respect to the IERS 2010 Earth's frame reference
+     * A Class constructor that gets the Position and Velocity coordinates from a Satellite object,
+     * with its cartesian coordinates in respect to the IERS 2010 Earth's frame reference
      */
     public Simulation(Satellite satellite) {
         init();
         setSatellite(satellite);
     }
 
+    /**
+     * A Class constructor that configures the main parameters needed for a pair device-satellite on a scenario
+     */
     public Simulation(String timeStart, String timeEnd, Device device, Satellite satellite, double step, double th) {
         init();
         this.time1 = timeStart;
@@ -226,6 +229,10 @@ public class Simulation implements Runnable {
         return sum;
     }
 
+    public void setStep(double step) {
+        this.step = step;
+    }
+
     @SuppressWarnings("squid:S2184")
     public void computeAccess() {
 
@@ -274,7 +281,6 @@ public class Simulation implements Runnable {
         computePVDBetween(startTime, endTime, this.step);
     }
 
-    // FIXME needs rework
     public void computePVDBetween(long startTime, long endTime, double stepInSeconds) {
         computePVDBetween(Utils.unix2stamp(startTime), Utils.unix2stamp(endTime), stepInSeconds);
     }

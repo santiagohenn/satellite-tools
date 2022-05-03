@@ -163,8 +163,6 @@ public class Utils {
 
     /**
      * Transforms an asset's Longitude, Latitude and Height to ECEF coordinates
-     *
-     * @return Satellite
      */
     public static void lla2ecef(Asset asset) {
         double lat = asset.getLatRad();
