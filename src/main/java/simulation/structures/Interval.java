@@ -103,4 +103,9 @@ public class Interval extends Event {
     public void setMetric(double metric) {
         this.metric = metric;
     }
+
+    @Override
+    public String toString() {
+        return start + "," + end + "," + duration;
+    }
 }

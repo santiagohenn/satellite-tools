@@ -191,4 +191,10 @@ public class Ephemeris {
     public double getLongitude() {
         return longitude;
     }
+
+    @Override
+    public String toString() {
+        return time + "," + posX + "," + posY + "," + posZ + "," + velX + ","
+                + velY + "," + velZ + "," + range + "," + dopplerShift;
+    }
 }
