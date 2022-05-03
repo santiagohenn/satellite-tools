@@ -28,13 +28,13 @@ import simulation.assets.objects.Device;
 import simulation.assets.objects.Satellite;
 import simulation.structures.Ephemeris;
 import simulation.structures.Interval;
+import simulation.utils.Log;
 import simulation.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Simulation condenses the main entry class for the software. It propagates orbits and output results based on the
@@ -104,8 +104,7 @@ public class Simulation implements Runnable {
         // configure Orekit
         var orekitData = new File("src/main/resources/orekit-data");
         if (!orekitData.exists()) {
-            System.err.format(Locale.US, "Failed to find %s folder%n",
-                    orekitData.getAbsolutePath());
+            Log.fatal("Failed to find %s folder%n " + orekitData.getAbsolutePath());
             System.exit(1);
         }
 

@@ -17,9 +17,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * Class of utility constants and transformations.
+ */
 public class Utils {
 
     public static final double EARTH_RADIUS_EQ_M = 6378135;    // Radius Earth [m]; WGS-84 (semi-major axis, a) (Equatorial Radius)
+    public static final double EARTH_RADIUS_EQ_KM = 6378.135;    // Radius Earth [Km]; WGS-84 (semi-major axis, a) (Equatorial Radius)
     public static final double EARTH_RADIUS_AVG_M = 6371009;    // Radius Earth [m]; WGS-84 (semi-major axis, a) (Average Radius)
     public static final double EARTH_RADIUS_AVG_KM = 6371.009;    // Radius Earth [Km]; WGS-84 (Average Radius)
     public static final double ECCENTRICITY = 8.1819190842622e-2;    // Ellipsoid constants: eccentricity; WGS84
@@ -38,7 +42,7 @@ public class Utils {
         try (InputStream input = Utils.class.getClassLoader().getResourceAsStream(path)) {
 
             if (input == null) {
-                System.out.println("Unable to find properties file");
+                Log.fatal("Unable to find properties file on path " + path);
                 throw new FileNotFoundException();
             }
 
@@ -71,8 +75,10 @@ public class Utils {
                 }
             }
         } catch (FileNotFoundException e) {
+            Log.warn("Unable to find file: " + fileName);
             e.printStackTrace();
         } catch (IOException e) {
+            Log.error("IOException: " + fileName);
             e.printStackTrace();
         }
 
@@ -101,8 +107,10 @@ public class Utils {
                 }
             }
         } catch (FileNotFoundException e) {
+            Log.warn("Unable to find file: " + fileName);
             e.printStackTrace();
         } catch (IOException e) {
+            Log.error("IOException: " + fileName);
             e.printStackTrace();
         }
 
@@ -162,10 +170,10 @@ public class Utils {
         double lat = asset.getLatRad();
         double lon = asset.getLonRad();
         double alt = asset.getHeight();
-        double N = EARTH_RADIUS_EQ_M / Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * Math.pow(Math.sin(lat), 2));
-        double x = (N + alt) * Math.cos(lat) * Math.cos(lon);
-        double y = (N + alt) * Math.cos(lat) * Math.sin(lon);
-        double z = ((1 - Math.pow(ECCENTRICITY, 2)) * N + alt) * Math.sin(lat);
+        double n = EARTH_RADIUS_EQ_M / Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * Math.pow(Math.sin(lat), 2));
+        double x = (n + alt) * Math.cos(lat) * Math.cos(lon);
+        double y = (n + alt) * Math.cos(lat) * Math.sin(lon);
+        double z = ((1 - Math.pow(ECCENTRICITY, 2)) * n + alt) * Math.sin(lat);
         asset.setPos(x, y, z);
     }
 
@@ -185,8 +193,8 @@ public class Utils {
 
         double lon = Math.atan2(y, x);
         double lat = Math.atan2((z + Math.pow(ep, 2) * b * Math.pow(Math.sin(th), 3)), (p - Math.pow(ECCENTRICITY, 2) * EARTH_RADIUS_EQ_M * Math.pow(Math.cos(th), 3)));
-        double N = EARTH_RADIUS_EQ_M / (Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * Math.pow(Math.sin(lat), 2)));
-        double alt = p / Math.cos(lat) - N;
+        double n = EARTH_RADIUS_EQ_M / (Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * Math.pow(Math.sin(lat), 2)));
+        double alt = p / Math.cos(lat) - n;
 
         // mod lat to 0-2pi
         lon = lon % (2 * Math.PI);
@@ -210,9 +218,9 @@ public class Utils {
     public static Ephemeris teme2ecef(Ephemeris ephemeris, double julianDate) {
 
         double gmst = 0;
-        double st[][] = new double[3][3];
-        double rpef[] = new double[3];
-        double pm[][] = new double[3][3];
+        double[][] st = new double[3][3];
+        double[] rpef = new double[3];
+        double[][] pm = new double[3][3];
 
         //Get Greenwich mean sidereal time
         gmst = greenwichMeanSidereal(julianDate);
@@ -234,7 +242,7 @@ public class Utils {
         rpef[2] = st[0][2] * ephemeris.getPosX() + st[1][2] * ephemeris.getPosY() + st[2][2] * ephemeris.getPosZ();
 
         //Get polar motion vector
-        polarm(julianDate, pm);
+        polarMotion(julianDate, pm);
 
         //ECEF postion vector is the inverse of the polar motion vector multiplied by rpef
         double x = pm[0][0] * rpef[0] + pm[1][0] * rpef[1] + pm[2][0] * rpef[2];
@@ -255,8 +263,8 @@ public class Utils {
      * @return Greenwich mean sidereal time in degrees (0-360)
      */
     public static double greenwichMeanSidereal(double julianDate) {
-        double Tu = (julianDate - 2451545.0);
-        double gmst = Tu * 24.06570982441908 + 18.697374558;
+        double tu = (julianDate - 2451545.0);
+        double gmst = tu * 24.06570982441908 + 18.697374558;
         gmst = (gmst % 24) * Math.PI / 12;
         return gmst;
     }
@@ -266,22 +274,22 @@ public class Utils {
      *
      * @param julianDate Julian Date
      */
-    static void polarm(double julianDate, double pm[][]) {
+    static void polarMotion(double julianDate, double[][] pm) {
 
-        double MJD; //Julian Date - 2,400,000.5 days
-        double A;
-        double C;
+        double mjd; //Julian Date - 2,400,000.5 days
+        double a;
+        double c;
         double xp; //Polar motion coefficient in radians
         double yp; //Polar motion coefficient in radians
 
         // Predict polar motion coefficients using IERS Bulletin - A (Vol. XXVIII No. 030)
-        MJD = julianDate - 2400000.5;
+        mjd = julianDate - 2400000.5;
 
-        A = 2 * Math.PI * (MJD - 57226) / 365.25;
-        C = 2 * Math.PI * (MJD - 57226) / 435;
+        a = 2 * Math.PI * (mjd - 57226) / 365.25;
+        c = 2 * Math.PI * (mjd - 57226) / 435;
 
-        xp = (0.1033 + 0.0494 * Math.cos(A) + 0.0482 * Math.sin(A) + 0.0297 * Math.cos(C) + 0.0307 * Math.sin(C)) * 4.84813681e-6;
-        yp = (0.3498 + 0.0441 * Math.cos(A) - 0.0393 * Math.sin(A) + 0.0307 * Math.cos(C) - 0.0297 * Math.sin(C)) * 4.84813681e-6;
+        xp = (0.1033 + 0.0494 * Math.cos(a) + 0.0482 * Math.sin(a) + 0.0297 * Math.cos(c) + 0.0307 * Math.sin(c)) * 4.84813681e-6;
+        yp = (0.3498 + 0.0441 * Math.cos(a) - 0.0393 * Math.sin(a) + 0.0307 * Math.cos(c) - 0.0297 * Math.sin(c)) * 4.84813681e-6;
 
         pm[0][0] = Math.cos(xp);
         pm[0][1] = 0.0;
@@ -334,7 +342,7 @@ public class Utils {
             data = new SatElset(tle1, tle2);
         } catch (SatElsetException see) {
             see.printStackTrace();
-            System.out.println("SatElsetException");
+            Log.error("SatElsetException " + see.toString());
         }
 
         double period = (24 * 60 * 60) / data.getMeanMotion();
