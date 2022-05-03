@@ -1,6 +1,6 @@
-package simulation.assets.objects;
+package tools.simulation.assets.entities;
 
-import simulation.assets.Asset;
+import tools.simulation.assets.Asset;
 
 public class Device extends Asset {
 

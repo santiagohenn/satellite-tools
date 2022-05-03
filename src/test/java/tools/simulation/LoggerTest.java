@@ -1,7 +1,7 @@
-package simulation;
+package tools.simulation;
 
 import org.junit.Test;
-import simulation.utils.Log;
+import tools.simulation.utils.Log;
 
 public class LoggerTest {
 

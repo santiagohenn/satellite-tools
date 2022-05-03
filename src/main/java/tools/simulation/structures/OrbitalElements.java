@@ -1,4 +1,4 @@
-package simulation.structures;
+package tools.simulation.structures;
 
 /**
  * This Class stores a set of orbital elements and some derivatives at a specific moment in time

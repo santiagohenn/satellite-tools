@@ -1,4 +1,4 @@
-package simulation.exceptions;
+package tools.simulation.exceptions;
 
 /**
  * Thrown when a value is out of the valid range.

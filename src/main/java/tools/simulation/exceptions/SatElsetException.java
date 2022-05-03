@@ -1,4 +1,4 @@
-package simulation.exceptions;
+package tools.simulation.exceptions;
 
 /**
  * Exception for SatElset problems

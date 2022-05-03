@@ -1,4 +1,4 @@
-package simulation.structures;
+package tools.simulation.structures;
 
 import java.util.ArrayList;
 import java.util.List;

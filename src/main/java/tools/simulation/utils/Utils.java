@@ -1,16 +1,16 @@
-package simulation.utils;
+package tools.simulation.utils;
 
 import org.orekit.data.DataContext;
 import org.orekit.propagation.analytical.tle.TLE;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScale;
-import simulation.assets.Asset;
-import simulation.assets.objects.Device;
-import simulation.assets.objects.Satellite;
-import simulation.exceptions.SatElsetException;
-import simulation.structures.Ephemeris;
-import simulation.structures.OrbitalElements;
-import simulation.structures.SatElset;
+import tools.simulation.assets.Asset;
+import tools.simulation.assets.entities.Device;
+import tools.simulation.assets.entities.Satellite;
+import tools.simulation.exceptions.SatElsetException;
+import tools.simulation.structures.Ephemeris;
+import tools.simulation.structures.OrbitalElements;
+import tools.simulation.structures.SatElset;
 
 import java.io.*;
 import java.text.ParseException;

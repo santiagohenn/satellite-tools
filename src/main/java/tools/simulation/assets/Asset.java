@@ -1,8 +1,8 @@
-package simulation.assets;
+package tools.simulation.assets;
 
 /**
  * Asset is the abstract class for objects that may participate in
- * a simulation and share parameters within the scenario. These are:
+ * a tools.simulation and share parameters within the scenario. These are:
  * <ul>
  * <li> ID
  * <li> Position (Either in cartesian or polar coordinates)

@@ -1,4 +1,4 @@
-package simulation.structures;
+package tools.simulation.structures;
 
 public class Ephemeris {
 

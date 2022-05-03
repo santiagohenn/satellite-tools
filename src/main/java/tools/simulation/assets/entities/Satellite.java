@@ -1,7 +1,7 @@
-package simulation.assets.objects;
+package tools.simulation.assets.entities;
 
-import simulation.assets.Asset;
-import simulation.structures.OrbitalElements;
+import tools.simulation.assets.Asset;
+import tools.simulation.structures.OrbitalElements;
 
 import java.util.Locale;
 
