@@ -1,4 +1,4 @@
-package tools.simulation.exceptions;
+package satellite.tools.exceptions;
 
 /**
  * Thrown when a value is out of the valid range.

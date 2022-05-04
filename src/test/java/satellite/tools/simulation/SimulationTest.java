@@ -1,10 +1,11 @@
-package tools.simulation;
+package satellite.tools.simulation;
 
 import org.junit.Test;
-import tools.simulation.assets.entities.Device;
-import tools.simulation.assets.entities.Satellite;
-import tools.simulation.structures.Ephemeris;
-import tools.simulation.structures.OrbitalElements;
+import satellite.tools.Simulation;
+import satellite.tools.assets.entities.Device;
+import satellite.tools.assets.entities.Satellite;
+import satellite.tools.structures.Ephemeris;
+import satellite.tools.structures.OrbitalElements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

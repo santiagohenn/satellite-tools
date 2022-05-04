@@ -1,7 +1,7 @@
-package tools.simulation.structures;
+package satellite.tools.structures;
 
-import tools.simulation.exceptions.SatElsetException;
-import tools.simulation.exceptions.ValueOutOfRangeException;
+import satellite.tools.exceptions.SatElsetException;
+import satellite.tools.exceptions.ValueOutOfRangeException;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

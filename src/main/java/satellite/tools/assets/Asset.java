@@ -1,4 +1,4 @@
-package tools.simulation.assets;
+package satellite.tools.assets;
 
 /**
  * Asset is the abstract class for objects that may participate in

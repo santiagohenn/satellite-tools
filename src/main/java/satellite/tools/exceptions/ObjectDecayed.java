@@ -1,4 +1,4 @@
-package tools.simulation.exceptions;
+package satellite.tools.exceptions;
 
 /**
  * Exception raised when a space object's orbit has decayed and

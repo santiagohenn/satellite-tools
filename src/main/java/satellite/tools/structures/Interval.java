@@ -1,4 +1,4 @@
-package tools.simulation.structures;
+package satellite.tools.structures;
 
 import java.util.ArrayList;
 import java.util.List;

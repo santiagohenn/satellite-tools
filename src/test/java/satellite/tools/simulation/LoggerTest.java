@@ -1,7 +1,7 @@
-package tools.simulation;
+package satellite.tools.simulation;
 
 import org.junit.Test;
-import tools.simulation.utils.Log;
+import satellite.tools.utils.Log;
 
 public class LoggerTest {
 

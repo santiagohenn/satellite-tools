@@ -1,4 +1,4 @@
-package tools.simulation;
+package satellite.tools;
 
 import org.hipparchus.geometry.euclidean.threed.Vector3D;
 import org.hipparchus.ode.events.Action;
@@ -23,13 +23,13 @@ import org.orekit.utils.Constants;
 import org.orekit.utils.IERSConventions;
 import org.orekit.utils.PVCoordinates;
 import org.orekit.utils.TimeStampedPVCoordinates;
-import tools.simulation.assets.Asset;
-import tools.simulation.assets.entities.Device;
-import tools.simulation.assets.entities.Satellite;
-import tools.simulation.structures.Ephemeris;
-import tools.simulation.structures.Interval;
-import tools.simulation.utils.Log;
-import tools.simulation.utils.Utils;
+import satellite.tools.assets.Asset;
+import satellite.tools.assets.entities.Device;
+import satellite.tools.assets.entities.Satellite;
+import satellite.tools.structures.Ephemeris;
+import satellite.tools.structures.Interval;
+import satellite.tools.utils.Log;
+import satellite.tools.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;

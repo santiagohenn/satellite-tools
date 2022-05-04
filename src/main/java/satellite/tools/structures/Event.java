@@ -1,4 +1,4 @@
-package tools.simulation.structures;
+package satellite.tools.structures;
 
 public class Event {
 
