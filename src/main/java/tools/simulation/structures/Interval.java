@@ -106,6 +106,6 @@ public class Interval extends Event {
 
     @Override
     public String toString() {
-        return start + "," + end + "," + duration;
+        return start + "," + end + "," + fromAssets + "," + toAssets + "," + duration;
     }
 }
