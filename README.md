@@ -1,6 +1,6 @@
 # satellite-tools
 
-Simple interface for orbital propagation tools, focused on scenarios 
+Simple interface for orbital propagation tools, focused on scenarios
 and access intervals between **assets**: either **Satellites** or **Devices** on the
 surface of the Earth.
 
@@ -19,21 +19,21 @@ Device device = new Device(15, 15, 3);
 
 // Instanciate a tools.simulation with a start time, end time, devices involved, time step in seconds and 
 // visibility threshold in degrees
-Simulation tools.simulation = new Simulation("2022-03-20T12:00:00.000", "2022-03-20T15:00:00.000", 
-        device, satellite, 60, 5);
+Simulation simulation = new Simulation("2022-03-20T12:00:00.000", "2022-03-20T15:00:00.000",
+device, satellite, 60, 5);
 
 // Compute access intervals
-tools.simulation.computeAccess();
+simulation.computeAccess();
 
 // Print intervals in Unix timestamp
 System.out.println("Start,End,Duration[ms]");
-tools.simulation.getIntervals().forEach(System.out::println);
+simulation.getIntervals().forEach(System.out::println);
 
 // Print intervals in yyyy-MM-dd'T'HH:mm:SS.sss format
 System.out.println("Start,End,Duration[s]");
-tools.simulation.getIntervals().forEach(interval -> {
-System.out.println(Utils.unix2stamp(interval.getStart()) + "," 
-        + Utils.unix2stamp(interval.getEnd()) + "," + interval.getDuration()/1000.0);
+simulation.getIntervals().forEach(interval -> {
+System.out.println(Utils.unix2stamp(interval.getStart()) + ","
++ Utils.unix2stamp(interval.getEnd()) + "," + interval.getDuration()/1000.0);
 });
 
 ```
@@ -44,10 +44,10 @@ System.out.println(Utils.unix2stamp(interval.getStart()) + ","
 OrbitalElements orbitalElements = new OrbitalElements("2020-01-01T19:40:00.000",6978135,0,98,310,0,220);
 Satellite satellite = new Satellite(orbitalElements);
 Device device = new Device(15, 15, 3);
-Simulation tools.simulation = new Simulation("2022-03-20T01:00:00.000", "2022-03-20T23:00:00.000"
-        , device, satellite, 60, 5);
+Simulation simulation = new Simulation("2022-03-20T01:00:00.000", "2022-03-20T23:00:00.000"
+, device, satellite, 60, 5);
 
-Ephemeris ephemeris = tools.simulation.computePVDAt("2022-03-20T03:00:00.000");
+Ephemeris ephemeris = simulation.computePVDAt("2022-03-20T03:00:00.000");
 System.out.println("time(unix ts),posX,posY,posZ,velX,velY,velZ,range[m],doppler[m/s]");
 System.out.println(ephemeris);
 
