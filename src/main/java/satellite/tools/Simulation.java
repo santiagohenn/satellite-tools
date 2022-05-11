@@ -107,7 +107,7 @@ public class Simulation implements Runnable {
         // configure Orekit
         var orekitData = new File("src/main/resources/orekit-data");
         if (!orekitData.exists()) {
-            Log.fatal("Failed to find %s folder%n " + orekitData.getAbsolutePath());
+            Log.fatal("Failed to find orekit-data folder " + orekitData.getAbsolutePath());
             System.exit(1);
         }
 
