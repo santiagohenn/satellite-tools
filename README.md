@@ -4,6 +4,16 @@ Simple interface for orbital propagation tools, focused on scenarios
 and access intervals between **assets**: either **Satellites** or **Devices** on the
 surface of the Earth.
 
+## To install in local maven
+
+```
+mvn install:install-file \ 
+        -Dfile=<Jar location> \
+        -DgroupId=com.santiagohenn -DartifactId=satellite-tools \
+        -Dversion=1.0 \ 
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+```
 ---
 # Basic usage
 
