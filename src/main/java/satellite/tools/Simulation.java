@@ -80,8 +80,11 @@ public class Simulation implements Runnable {
     private Date contact = new Date();
     private double lastSimTime = 0;
 
+    /**
+     * Default constructor
+     * **/
     public Simulation() {
-        init();
+
     }
 
     /**
@@ -89,7 +92,6 @@ public class Simulation implements Runnable {
      * with its cartesian coordinates in respect to the IERS 2010 Earth's frame reference
      */
     public Simulation(Satellite satellite) {
-        init();
         setSatellite(satellite);
     }
 
@@ -97,7 +99,6 @@ public class Simulation implements Runnable {
      * A Class constructor that configures the main parameters needed for a pair device-satellite on a scenario
      */
     public Simulation(String timeStart, String timeEnd, Device device, Satellite satellite, double step, double th) {
-        init();
         this.time1 = timeStart;
         this.time2 = timeEnd;
         setSatellite(satellite);
@@ -107,7 +108,6 @@ public class Simulation implements Runnable {
     }
 
     public Simulation(String timeStart, String timeEnd, double step, double th) {
-        init();
         this.time1 = timeStart;
         this.time2 = timeEnd;
         this.step = step;
@@ -115,18 +115,10 @@ public class Simulation implements Runnable {
     }
 
     public Simulation(long timeStart, long timeEnd, double step, double th) {
-        init();
         this.time1 = Utils.unix2stamp(timeStart);
         this.time2 = Utils.unix2stamp(timeEnd);
         this.step = step;
         this.th = Math.toRadians(th);
-    }
-
-    private void init() {
-
-//        DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-//        manager.addProvider(new DirectoryCrawler(orekitData));
-
     }
 
     public void setParams(String timeStart, String timeEnd, double step, double th) {
