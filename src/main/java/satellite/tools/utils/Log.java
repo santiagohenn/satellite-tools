@@ -8,10 +8,6 @@ public class Log {
     //Initialize Log4j instance
     private static final Logger Log = LogManager.getLogger(Log.class);
 
-    public static void setLevel() {
-
-    }
-
     //Info Level Logs
     public static void info(String message) {
         Log.info(message);

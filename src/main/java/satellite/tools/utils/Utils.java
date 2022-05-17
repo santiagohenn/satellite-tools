@@ -357,6 +357,18 @@ public class Utils {
     }
 
     /**
+     * This method returns a File instance for the provided Path
+     * **/
+    public static File loadFile(String path) {
+        var file = new File(path);
+        if (!file.exists()) {
+            Log.fatal("Failed to find directory" + file.getAbsolutePath());
+            System.exit(1);
+        }
+        return file;
+    }
+
+    /**
      * This method returns the Satellite's FOV in radians
      * **/
     public double getFOV(Satellite satellite, double th) {

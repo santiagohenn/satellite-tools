@@ -6,11 +6,26 @@ import satellite.tools.assets.entities.Device;
 import satellite.tools.assets.entities.Satellite;
 import satellite.tools.structures.Ephemeris;
 import satellite.tools.structures.OrbitalElements;
+import satellite.tools.utils.Log;
+
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class SimulationTest {
+
+    @Test
+    public void testLoadProperties() {
+        Simulation simulation = new Simulation();
+        Properties p = simulation.getProperties();
+        Log.debug("Orekit data path: " + p.get("orekit_data_path"));
+        Log.debug("Start date: " + p.get("start_date"));
+        Log.debug("End date: " + p.get("end_date"));
+        Log.debug("Time step: " + p.get("time_step"));
+        Log.debug("Vis. TH: " + p.get("visibility_threshold"));
+        Log.debug("th_detection: " + p.get("th_detection"));
+    }
 
     @Test
     public void testClassInstantiation() {

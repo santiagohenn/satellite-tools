@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Simulation condenses the main entry class for the software. It propagates orbits and output results based on the
@@ -42,21 +43,40 @@ import java.util.List;
  */
 public class Simulation implements Runnable {
 
-    private List<Interval> intervalList;
-    private List<Ephemeris> ephemerisList = new ArrayList<>();
-    private String time1 = "2020-03-20T11:00:00.000";
-    private String time2 = "2020-03-30T11:00:00.000";
+    /**
+     * Initial properties and extrapolation variables and orekit data path
+     * */
+    private static final Properties prop = Utils.loadProperties("sim.properties");
+    private static final String orekitPath = (String) prop.get("orekit_data_path");
+    private static final File orekitFile = Utils.loadFile(orekitPath);
 
-    private Satellite satellite;
-    private Device device;
+    private static final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
 
-    private double step = 60D;
-    private double th;
-    private Frame inertialFrame;
-    private BodyShape earth;
+    static {
+        manager.addProvider(new DirectoryCrawler(orekitFile));
+        Log.debug("Manager loaded");
+    }
+
+    private static final Frame inertialFrame = FramesFactory.getEME2000();
+    private static final Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
+    private static final BodyShape earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+            Constants.WGS84_EARTH_FLATTENING,
+            earthFrame);
+    private static final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
+
+    /**
+     * Mutable variables
+     * **/
+    private String time1 = (String) prop.get("start_date");
+    private String time2 = (String) prop.get("end_date");
+    private double step = Double.parseDouble((String) prop.get("time_step"));
+    private double th = Double.parseDouble((String) prop.get("visibility_threshold"));
     private TopocentricFrame topocentricFrame;
     private TLEPropagator tlePropagator;
-    private static final double TH_DETECTION = 0.001; // 1 ms default
+    private Satellite satellite;
+    private Device device;
+    private final List<Interval> intervalList = new ArrayList<>();
+    private final List<Ephemeris> ephemerisList = new ArrayList<>();
     private Date contact = new Date();
     private double lastSimTime = 0;
 
@@ -104,23 +124,8 @@ public class Simulation implements Runnable {
 
     private void init() {
 
-        // configure Orekit
-        var orekitData = new File("src/main/resources/orekit-data");
-        if (!orekitData.exists()) {
-            Log.fatal("Failed to find orekit-data folder " + orekitData.getAbsolutePath());
-            System.exit(1);
-        }
-
-        DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-        manager.addProvider(new DirectoryCrawler(orekitData));
-
-        // configure Earth frame:
-        Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
-        this.earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-                Constants.WGS84_EARTH_FLATTENING,
-                earthFrame);
-        this.inertialFrame = FramesFactory.getEME2000();
-        this.intervalList = new ArrayList<>();
+//        DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
+//        manager.addProvider(new DirectoryCrawler(orekitData));
 
     }
 
@@ -378,6 +383,10 @@ public class Simulation implements Runnable {
 
     public double getLastSimTime() {
         return this.lastSimTime;
+    }
+
+    public Properties getProperties() {
+        return prop;
     }
 
     @Override
