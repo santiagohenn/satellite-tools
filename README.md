@@ -1,9 +1,46 @@
 # satellite-tools
 
-Simple interface for orbital propagation tools, focused on scenarios
+Simple interface for orbital propagation tools, focused on space system scenarios
 and access intervals between **assets**: either **Satellites** or **Devices** on the
 surface of the Earth.
 
+# Configuration
+
+### Simulation
+Using the sim.properties file in classpath:
+
+```properties
+# Orbit extrapolation data folder path. Can be cloned from: https://gitlab.orekit.org/orekit/orekit-data
+orekit_data_path=C:/Projects/orekit-data
+# Default start date
+start_date=2022-01-01T20:20:00.000
+# Default end date
+end_date=2022-01-01T20:45:00.000
+# Default time step in seconds
+time_step=60
+# Minimum visibility threshold over the horizon, in degrees
+visibility_threshold=5
+# Access interval threshold detection in seconds (internal propagator parameter)
+th_detection=0.001
+```
+
+### Logger
+
+To configure the Logger use the log4j2.properties in the classpath or another valid method.
+Refer to [Log4j configuration](https://logging.apache.org/log4j/2.x/manual/configuration.html) for more information.
+
+### Install in local maven
+
+Build the project and then install the jar in local maven:
+
+```
+mvn install:install-file \ 
+        -Dfile=<Jar location> \
+        -DgroupId=com.santiagohenn -DartifactId=satellite-tools \
+        -Dversion=2.0 \ 
+        -Dpackaging=jar \
+        -DgeneratePom=true \
+```
 ---
 # Basic usage
 
