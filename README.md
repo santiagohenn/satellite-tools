@@ -6,11 +6,13 @@ surface of the Earth.
 
 ## To install in local maven
 
+Build the project and then install the jar in local maven:
+
 ```
 mvn install:install-file \ 
         -Dfile=<Jar location> \
         -DgroupId=com.santiagohenn -DartifactId=satellite-tools \
-        -Dversion=1.0 \ 
+        -Dversion=2.0 \ 
         -Dpackaging=jar \
         -DgeneratePom=true \
 ```
