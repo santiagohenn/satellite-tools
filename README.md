@@ -13,9 +13,9 @@ Using the sim.properties file in classpath:
 # Orbit extrapolation data folder path. Can be cloned from: https://gitlab.orekit.org/orekit/orekit-data
 orekit_data_path=C:/Projects/orekit-data
 # Default start date
-start_date=2020-01-01T20:20:00.000
+start_date=2022-01-01T20:20:00.000
 # Default end date
-end_date=2020-01-01T20:45:00.000
+end_date=2022-01-01T20:45:00.000
 # Default time step in seconds
 time_step=60
 # Minimum visibility threshold over the horizon, in degrees

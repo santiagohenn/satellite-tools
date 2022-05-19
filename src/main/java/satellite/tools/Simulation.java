@@ -70,7 +70,7 @@ public class Simulation implements Runnable {
     private String time1 = (String) prop.get("start_date");
     private String time2 = (String) prop.get("end_date");
     private double step = Double.parseDouble((String) prop.get("time_step"));
-    private double th = Double.parseDouble((String) prop.get("visibility_threshold"));
+    private double th = Math.toRadians(Double.parseDouble((String) prop.get("visibility_threshold")));
     private TopocentricFrame topocentricFrame;
     private TLEPropagator tlePropagator;
     private Satellite satellite;
