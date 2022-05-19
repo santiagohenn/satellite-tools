@@ -88,7 +88,7 @@ public class Simulation implements Runnable {
     }
 
     /**
-     * A Class constructor that gets the Position and Velocity coordinates from a Satellite object,
+     * Constructor that receives the Position and Velocity coordinates from a Satellite object,
      * with its cartesian coordinates in respect to the IERS 2010 Earth's frame reference
      */
     public Simulation(Satellite satellite) {
@@ -96,27 +96,22 @@ public class Simulation implements Runnable {
     }
 
     /**
-     * A Class constructor that configures the main parameters needed for a pair device-satellite on a scenario
+     * Constructor that receives a Satellite object and a Device object.
+     */
+    public Simulation(Satellite satellite, Device device) {
+        setSatellite(satellite);
+        setDevice(device);
+    }
+
+    /**
+     * A Class constructor that configures the main parameters needed for a pair device-satellite on a scenario (replaces
+     * default values)
      */
     public Simulation(String timeStart, String timeEnd, Device device, Satellite satellite, double step, double th) {
         this.time1 = timeStart;
         this.time2 = timeEnd;
         setSatellite(satellite);
         setDevice(device);
-        this.step = step;
-        this.th = Math.toRadians(th);
-    }
-
-    public Simulation(String timeStart, String timeEnd, double step, double th) {
-        this.time1 = timeStart;
-        this.time2 = timeEnd;
-        this.step = step;
-        this.th = Math.toRadians(th);
-    }
-
-    public Simulation(long timeStart, long timeEnd, double step, double th) {
-        this.time1 = Utils.unix2stamp(timeStart);
-        this.time2 = Utils.unix2stamp(timeEnd);
         this.step = step;
         this.th = Math.toRadians(th);
     }
