@@ -98,9 +98,9 @@ public class Simulation implements Runnable {
     /**
      * Constructor that receives a Satellite object and a Device object.
      */
-    public Simulation(Satellite satellite, Device device) {
-        setSatellite(satellite);
+    public Simulation(Device device, Satellite satellite) {
         setDevice(device);
+        setSatellite(satellite);
     }
 
     /**

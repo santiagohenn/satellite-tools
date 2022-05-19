@@ -33,8 +33,7 @@ public class SimulationTest {
         Satellite satellite = new Satellite("1 25544U 98067A   22122.68846215  .00030457  00000-0  54086-3 0  9994",
                 "2 25544  51.6435 201.9265 0006436  54.9097 105.7177 15.49915502338120");
         Device device = new Device(15, 15, 3);
-        Simulation sim = new Simulation(satellite);
-        sim.setDevice(device);
+        Simulation sim = new Simulation(device, satellite);
         sim.run();
         Log.debug("Access intervals between " + sim.getStartTime() + " -> " + sim.getEndTime());
         Log.debug("N of intervals: " + sim.getIntervals().size());
