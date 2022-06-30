@@ -359,11 +359,16 @@ public class Utils {
     /**
      * This method returns a File instance for the provided Path
      * **/
-    public static File loadFile(String path) {
+    public static File loadDirectory(String path) {
+
+        if (!path.endsWith("/")) {
+            path = path + "/";
+        }
+
         var file = new File(path);
         if (!file.exists()) {
-            Log.fatal("Failed to find directory" + file.getAbsolutePath());
-            System.exit(1);
+            Log.fatal("Failed to find directory: " + file.getAbsolutePath());
+            //System.exit(1);
         }
         return file;
     }
