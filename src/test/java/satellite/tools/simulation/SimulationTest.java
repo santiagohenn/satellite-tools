@@ -18,7 +18,7 @@ public class SimulationTest {
 
     @Test
     public void testLoadProperties() {
-        Simulation simulation = new Simulation();
+        Simulation simulation = new Simulation("C:/Projects/orekit-data/");
         Properties p = simulation.getProperties();
         Log.debug("Orekit data path: " + p.get("orekit_data_path"));
         Log.debug("Start date: " + p.get("start_date"));

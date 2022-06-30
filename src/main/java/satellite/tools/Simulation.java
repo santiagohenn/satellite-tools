@@ -31,6 +31,7 @@ import satellite.tools.structures.Interval;
 import satellite.tools.utils.Log;
 import satellite.tools.utils.Utils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,21 +48,9 @@ public class Simulation implements Runnable {
      * Initial properties and extrapolation variables and orekit data path
      * */
     private static final Properties prop = Utils.loadProperties("sim.properties");
-    private static final String orekitPath = (String) prop.get("orekit_data_path");
-    private static final File orekitFile = Utils.loadFile(orekitPath);
-
     private static final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-
-    static {
-        manager.addProvider(new DirectoryCrawler(orekitFile));
-        Log.debug("Manager loaded");
-    }
-
     private static final Frame inertialFrame = FramesFactory.getEME2000();
-    private static final Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
-    private static final BodyShape earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-            Constants.WGS84_EARTH_FLATTENING,
-            earthFrame);
+    private static BodyShape earth;
     private static final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
     /**
@@ -84,6 +73,21 @@ public class Simulation implements Runnable {
      * Default constructor
      * **/
     public Simulation() {
+        loadOrekit();
+    }
+
+    /**
+     * Orekit path specified constructor
+     * **/
+    public Simulation(String orekitPath) {
+
+        File orekitFile = Utils.loadDirectory(orekitPath);
+        manager.addProvider(new DirectoryCrawler(orekitFile));
+        Log.debug("Manager loaded from: " + orekitPath);
+        Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
+        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+                Constants.WGS84_EARTH_FLATTENING,
+                earthFrame);
 
     }
 
@@ -92,6 +96,7 @@ public class Simulation implements Runnable {
      * with its cartesian coordinates in respect to the IERS 2010 Earth's frame reference
      */
     public Simulation(Satellite satellite) {
+        loadOrekit();
         setSatellite(satellite);
     }
 
@@ -99,6 +104,7 @@ public class Simulation implements Runnable {
      * Constructor that receives a Satellite object and a Device object.
      */
     public Simulation(Device device, Satellite satellite) {
+        loadOrekit();
         setDevice(device);
         setSatellite(satellite);
     }
@@ -108,12 +114,30 @@ public class Simulation implements Runnable {
      * default values)
      */
     public Simulation(String timeStart, String timeEnd, Device device, Satellite satellite, double step, double th) {
+        loadOrekit();
         this.time1 = timeStart;
         this.time2 = timeEnd;
         setSatellite(satellite);
         setDevice(device);
         this.step = step;
         this.th = Math.toRadians(th);
+    }
+
+    public static void loadOrekit() {
+        Log.debug("Orekit data loading");
+        String orekitPath = (String) prop.get("orekit_data_path");
+        if (orekitPath == null || orekitPath.isBlank() || orekitPath.isEmpty()) {
+            Log.error("Insert orekit_data_path in properties or use the corresponding Orekit-specified constructor.");
+            return;
+        }
+        File orekitFile = Utils.loadDirectory(orekitPath);
+        manager.addProvider(new DirectoryCrawler(orekitFile));
+        Log.debug("Manager loaded");
+        Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
+        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+                Constants.WGS84_EARTH_FLATTENING,
+                earthFrame);
+
     }
 
     public void setParams(String timeStart, String timeEnd, double step, double th) {
