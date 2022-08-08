@@ -23,6 +23,7 @@ public class Satellite extends Asset {
     private double firstBallistic;
     private double secondBallistic;
     private double radPressure;
+    private int ephemerisType = 0;
     private int elementsNumber = 999;
     private OrbitalElements elements;
     private int revolutionNumber = 7836;
@@ -169,6 +170,14 @@ public class Satellite extends Asset {
 
     public void setElementsNumber(int elementsNumber) {
         this.elementsNumber = elementsNumber;
+    }
+
+    public int getEphemerisType() {
+        return ephemerisType;
+    }
+
+    public void setEphemerisType(int ephemerisType) {
+        this.ephemerisType = ephemerisType;
     }
 
     public void setElements (OrbitalElements elements) {
