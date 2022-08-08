@@ -15,14 +15,17 @@ public class Satellite extends Asset {
     private String name = "";
     private String tle1 = "";
     private String tle2 = "";
-    private OrbitalElements elements;
     private int satelliteNumber = 1;
     private char satelliteClassification = 'U';
-    private String launchPiece = "A";
     private int launchNumber = 76;
+    private String launchPiece = "A";
     private int launchYear = 2018;
-    private int revolutionNumber = 7836;
+    private double firstBallistic;
+    private double secondBallistic;
+    private double radPressure;
     private int elementsNumber = 999;
+    private OrbitalElements elements;
+    private int revolutionNumber = 7836;
 
     /**
      * Default constructor
@@ -75,6 +78,7 @@ public class Satellite extends Asset {
         this.satelliteClassification = satelliteClassification;
         this.elements = elements;
     }
+
 
     /**
      * Class constructor from NORAD's Two Line Elements
@@ -169,6 +173,30 @@ public class Satellite extends Asset {
 
     public void setElements (OrbitalElements elements) {
         this.elements = elements;
+    }
+
+    public double getFirstBallistic() {
+        return firstBallistic;
+    }
+
+    public void setFirstBallistic(double firstBallistic) {
+        this.firstBallistic = firstBallistic;
+    }
+
+    public double getSecondBallistic() {
+        return secondBallistic;
+    }
+
+    public void setSecondBallistic(double secondBallistic) {
+        this.secondBallistic = secondBallistic;
+    }
+
+    public double getRadPressure() {
+        return radPressure;
+    }
+
+    public void setRadPressure(double radPressure) {
+        this.radPressure = radPressure;
     }
 
     public OrbitalElements getElements() {
