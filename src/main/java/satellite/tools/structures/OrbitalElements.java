@@ -14,9 +14,9 @@ public class OrbitalElements {
     private double period;
     private long unixTime;
     private String timestamp;
-    private double dragCoefficient;
-    private double meanMotionFirstDerivative;
-    private double meanMotionSecondDerivative;
+    private double dragCoefficient = 0;
+    private double meanMotionFirstDerivative = 0;
+    private double meanMotionSecondDerivative = 0;
 
     /**
      * The class default constructor.

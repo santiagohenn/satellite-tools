@@ -319,7 +319,7 @@ public class Utils {
     public static TLE satellite2tle(Satellite satellite) {
         OrbitalElements elements = satellite.getElements();
         return new TLE(satellite.getSatelliteNumber(), satellite.getSatelliteClassification(), satellite.getLaunchYear(),
-                satellite.getLaunchNumber(), satellite.getLaunchPiece(), 0, satellite.getElementsNumber(),
+                satellite.getLaunchNumber(), satellite.getLaunchPiece(), satellite.getEphemerisType(), satellite.getElementsNumber(),
                 Utils.stamp2AD(elements.getTimestamp()), computeMeanMotion(elements.getSemiMajorAxis()),
                 elements.getMeanMotionFirstDerivative(), elements.getMeanMotionSecondDerivative(),
                 elements.getEccentricity(), elements.getInclinationRads(), elements.getArgOfPerigeeRads(),
@@ -464,7 +464,7 @@ public class Utils {
      */
     public static long stamp2unix(String dateStamp) {
 
-        var dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+        var dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTCG"));
         var parsedDate = new Date();
         try {
