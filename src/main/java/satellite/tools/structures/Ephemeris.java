@@ -18,6 +18,10 @@ public class Ephemeris {
     private int indexFrom;
     private int indexTo;
 
+    public Ephemeris() {
+
+    }
+
     public Ephemeris(long time, double posX, double posY, double posZ, double velX, double velY, double velZ, double range, double dopplerShift) {
         this.time = time;
         this.posX = posX;

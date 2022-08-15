@@ -364,6 +364,23 @@ public class Simulation implements Runnable {
 
     }
 
+    public Ephemeris getECEFVectorAt(AbsoluteDate absoluteDate) {
+
+        PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
+        TimeStampedPVCoordinates pvcCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
+
+        Frame bodyFrame = earth.getBodyFrame();
+        Transform t = inertialFrame.getTransformTo(bodyFrame, pvcCoordinates.getDate());
+        pvcCoordinates = earth.projectToGround(t.transformPVCoordinates(pvcCoordinates), inertialFrame);
+
+        Ephemeris eph = new Ephemeris();
+        eph.setPos(pvcCoordinates.getPosition().getX(),
+                pvcCoordinates.getPosition().getY(),
+                pvcCoordinates.getPosition().getZ());
+        return new Ephemeris();
+
+    }
+
     private void addEphemeris(AbsoluteDate absoluteDate, PVCoordinates pvCoordinates) {
         ephemerisList.add(toEphemeris(absoluteDate, pvCoordinates));
     }
