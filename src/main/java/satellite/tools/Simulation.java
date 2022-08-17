@@ -376,21 +376,10 @@ public class Simulation implements Runnable {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
 
-        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
-
-        Frame bodyFrame = earth.getBodyFrame();
-        Transform t = inertialFrame.getTransformTo(bodyFrame, timeStampedPVCoordinates.getDate());
-        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
-
-        double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
-        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
-
         Ephemeris eph = new Ephemeris();
         eph.setPos(pvCoordinates.getPosition().getX(),
                 pvCoordinates.getPosition().getY(),
                 pvCoordinates.getPosition().getZ());
-
-        eph.setSSP(alpha, delta);
 
         return eph;
 
