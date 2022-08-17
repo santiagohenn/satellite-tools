@@ -348,9 +348,10 @@ public class Simulation implements Runnable {
         lastSimTime = System.currentTimeMillis() - t0;
     }
 
-    public Ephemeris computeSSPAndGetEphemeris(AbsoluteDate absoluteDate) {
+    public Ephemeris computeEphemeris(AbsoluteDate absoluteDate) {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
+
         TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
 
         Frame bodyFrame = earth.getBodyFrame();
@@ -360,24 +361,38 @@ public class Simulation implements Runnable {
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta =  timeStampedPVCoordinates.getPosition().getDelta();
 
-        return new Ephemeris(this.satellite.getId(), Math.toDegrees(delta), Math.toDegrees(alpha));
+        Ephemeris eph = new Ephemeris();
+        eph.setPos(pvCoordinates.getPosition().getX(),
+                pvCoordinates.getPosition().getY(),
+                pvCoordinates.getPosition().getZ());
+
+        eph.setSSP(alpha, delta);
+
+        return eph;
 
     }
 
     public Ephemeris getECEFVectorAt(AbsoluteDate absoluteDate) {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
-        TimeStampedPVCoordinates pvcCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
+
+        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
 
         Frame bodyFrame = earth.getBodyFrame();
-        Transform t = inertialFrame.getTransformTo(bodyFrame, pvcCoordinates.getDate());
-        pvcCoordinates = earth.projectToGround(t.transformPVCoordinates(pvcCoordinates), inertialFrame);
+        Transform t = inertialFrame.getTransformTo(bodyFrame, timeStampedPVCoordinates.getDate());
+        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
+
+        double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
+        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
 
         Ephemeris eph = new Ephemeris();
-        eph.setPos(pvcCoordinates.getPosition().getX(),
-                pvcCoordinates.getPosition().getY(),
-                pvcCoordinates.getPosition().getZ());
-        return new Ephemeris();
+        eph.setPos(pvCoordinates.getPosition().getX(),
+                pvCoordinates.getPosition().getY(),
+                pvCoordinates.getPosition().getZ());
+
+        eph.setSSP(alpha, delta);
+
+        return eph;
 
     }
 
