@@ -366,7 +366,7 @@ public class Simulation implements Runnable {
                 pvCoordinates.getPosition().getY(),
                 pvCoordinates.getPosition().getZ());
 
-        eph.setSSP(alpha, delta);
+        eph.setSSP(delta, alpha);
 
         return eph;
 
