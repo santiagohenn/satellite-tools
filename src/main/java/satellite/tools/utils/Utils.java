@@ -247,9 +247,10 @@ public class Utils {
         double y = pm[0][1] * rpef[0] + pm[1][1] * rpef[1] + pm[2][1] * rpef[2];
         double z = pm[0][2] * rpef[0] + pm[1][2] * rpef[1] + pm[2][2] * rpef[2];
 
-        ephemeris.setPos(x, y, z);
+        Ephemeris ecef = new Ephemeris();
+        ecef.setPos(x, y, z);
 
-        return ephemeris;
+        return ecef;
     }
 
     /**

@@ -49,7 +49,7 @@ public class Simulation implements Runnable {
      * */
     private static final Properties prop = Utils.loadProperties("sim.properties");
     private static final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-    private static final Frame inertialFrame = FramesFactory.getEME2000();
+    private static Frame inertialFrame = FramesFactory.getTEME();//.getEME2000();
     private static BodyShape earth;
     private static final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
@@ -88,6 +88,7 @@ public class Simulation implements Runnable {
         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                 Constants.WGS84_EARTH_FLATTENING,
                 earthFrame);
+
 
     }
 
@@ -138,6 +139,16 @@ public class Simulation implements Runnable {
                 Constants.WGS84_EARTH_FLATTENING,
                 earthFrame);
 
+    }
+
+    public void setInertialFrame(Frame inertialFrame) {
+        this.inertialFrame = inertialFrame;
+    }
+
+    public static void setEarthFrame(Frame earthFrame) {
+        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+                Constants.WGS84_EARTH_FLATTENING,
+                earthFrame);
     }
 
     public void setParams(String timeStart, String timeEnd, double step, double th) {
@@ -348,10 +359,9 @@ public class Simulation implements Runnable {
         lastSimTime = System.currentTimeMillis() - t0;
     }
 
-    public Ephemeris computeEphemeris(AbsoluteDate absoluteDate) {
+    public Ephemeris computeEphemerisKm(AbsoluteDate absoluteDate) {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
-
         TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
 
         Frame bodyFrame = earth.getBodyFrame();
@@ -360,13 +370,19 @@ public class Simulation implements Runnable {
 
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta =  timeStampedPVCoordinates.getPosition().getDelta();
+        double height = timeStampedPVCoordinates.getPosition().getNorm();
 
         Ephemeris eph = new Ephemeris();
-        eph.setPos(pvCoordinates.getPosition().getX(),
-                pvCoordinates.getPosition().getY(),
-                pvCoordinates.getPosition().getZ());
 
-        eph.setSSP(delta, alpha);
+        eph.setPos(pvCoordinates.getPosition().getX() / 1000.0,
+                pvCoordinates.getPosition().getY() / 1000.0,
+                pvCoordinates.getPosition().getZ() / 1000.0);
+
+        eph.setVel(pvCoordinates.getVelocity().getX() / 1000.0,
+                pvCoordinates.getVelocity().getY() / 1000.0,
+                pvCoordinates.getVelocity().getZ() / 1000.0);
+
+        eph.setSSP(delta, alpha, height);
 
         return eph;
 
