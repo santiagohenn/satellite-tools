@@ -31,7 +31,6 @@ import satellite.tools.structures.Interval;
 import satellite.tools.utils.Log;
 import satellite.tools.utils.Utils;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,11 +46,11 @@ public class Simulation implements Runnable {
     /**
      * Initial properties and extrapolation variables and orekit data path
      * */
-    private static final Properties prop = Utils.loadProperties("sim.properties");
-    private static final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-    private static Frame inertialFrame = FramesFactory.getTEME();//.getEME2000();
-    private static BodyShape earth;
-    private static final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
+    private final Properties prop = Utils.loadProperties("sim.properties");
+    private final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
+    private Frame inertialFrame = FramesFactory.getTEME();//.getEME2000();
+    private BodyShape earth;
+    private final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
     /**
      * Mutable variables
@@ -64,8 +63,8 @@ public class Simulation implements Runnable {
     private TLEPropagator tlePropagator;
     private Satellite satellite;
     private Device device;
-    private final List<Interval> intervalList = new ArrayList<>();
-    private final List<Ephemeris> ephemerisList = new ArrayList<>();
+    private List<Interval> intervalList = new ArrayList<>();
+    private List<Ephemeris> ephemerisList = new ArrayList<>();
     private Date contact = new Date();
     private double lastSimTime = 0;
 
@@ -124,7 +123,7 @@ public class Simulation implements Runnable {
         this.th = Math.toRadians(th);
     }
 
-    public static void loadOrekit() {
+    public void loadOrekit() {
         Log.debug("Orekit data loading");
         String orekitPath = (String) prop.get("orekit_data_path");
         if (orekitPath == null || orekitPath.isBlank() || orekitPath.isEmpty()) {
@@ -145,7 +144,7 @@ public class Simulation implements Runnable {
         this.inertialFrame = inertialFrame;
     }
 
-    public static void setEarthFrame(Frame earthFrame) {
+    public void setEarthFrame(Frame earthFrame) {
         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                 Constants.WGS84_EARTH_FLATTENING,
                 earthFrame);
