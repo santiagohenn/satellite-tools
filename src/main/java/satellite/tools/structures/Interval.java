@@ -13,13 +13,20 @@ public class Interval extends Event {
     private List<Integer> toAssets = new ArrayList<>();
     private double metric;
 
+    public Interval(Interval interval) {
+        this.start = interval.getStart();
+        this.end = interval.getEnd();
+        this.duration = end - start;
+        fromAssets.addAll(interval.getFromAssets());
+        toAssets.addAll(interval.getToAssets());
+    }
+
     public Interval(long start, long end, Integer from, Integer to) {
         this.start = start;
         this.end = end;
         this.duration = end - start;
         fromAssets.add(from);
         toAssets.add(to);
-        this.duration = end - start;
     }
 
     public Interval(long start, long end, List<Integer> fromAssets, List<Integer> toAssets) {

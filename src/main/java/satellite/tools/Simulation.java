@@ -41,14 +41,14 @@ import java.util.Properties;
  * Simulation condenses the main entry class for the software. It propagates orbits and output results based on the
  * configured Satellite object and parameters such as date and reference frames.
  */
-public class Simulation implements Runnable {
+public class Simulation {
 
     /**
      * Initial properties and extrapolation variables and orekit data path
      * */
     private Properties prop = Utils.loadProperties("sim.properties");
     private DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-    private Frame inertialFrame = FramesFactory.getTEME();//.getEME2000();
+    private Frame inertialFrame = FramesFactory.getEME2000(); // .getTEME();
     private BodyShape earth;
     private double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
@@ -87,8 +87,6 @@ public class Simulation implements Runnable {
         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                 Constants.WGS84_EARTH_FLATTENING,
                 earthFrame);
-
-
     }
 
     /**
@@ -436,7 +434,6 @@ public class Simulation implements Runnable {
         return prop;
     }
 
-    @Override
     public void run() {
         computeAccess();
     }
