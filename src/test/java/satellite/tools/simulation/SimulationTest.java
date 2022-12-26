@@ -7,7 +7,6 @@ import satellite.tools.assets.entities.Satellite;
 import satellite.tools.structures.Ephemeris;
 import satellite.tools.structures.OrbitalElements;
 import satellite.tools.utils.Log;
-import satellite.tools.utils.Utils;
 
 import java.util.Properties;
 
@@ -117,6 +116,18 @@ public class SimulationTest {
         System.out.println("time(unix ts),posX,posY,posZ,velX,velY,velZ,range[m],doppler[m/s]");
         System.out.println(ephemeris);
         assertNotNull(ephemeris);
+    }
+
+    @Test
+    public void testComputeAccessIntervals() {
+
+        OrbitalElements orbitalElements = new OrbitalElements("2020-01-01T19:40:00.000", 6978135, 0, 98, 310, 0, 220);
+        Satellite satellite = new Satellite(orbitalElements);
+        Device device = new Device(15, 15, 3);
+        Simulation simulation = new Simulation("2022-03-20T01:00:00.000", "2022-03-20T23:00:00.000", device, satellite, 60, 5);
+        simulation.computeAccess();
+        simulation.getIntervals().forEach(System.out::println);
+        assertNotNull(simulation.getIntervals());
     }
 
 }
