@@ -28,14 +28,14 @@ public class OrbitalElements {
     /**
      * The class constructor. Takes a timestamp in the YYYY-MM-DDTHH:MM:SS.sss format and each orbital element as a double
      * value in this order and format:
-     *  <ul>
-     *  <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
-     *  <li> Eccentricity: The orbit's eccentricity
-     *  <li> Inclination: The orbit's inclination in degrees
-     *  <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
-     *  <li> Argument of Perigee: The orbits Argument of Perigee in degrees
-     *  <li> Anomaly: The orbit's true or mean anomaly in degrees
-     *  </ul>
+     * <ul>
+     * <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
+     * <li> Eccentricity: The orbit's eccentricity
+     * <li> Inclination: The orbit's inclination in degrees
+     * <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
+     * <li> Argument of Perigee: The orbits Argument of Perigee in degrees
+     * <li> Anomaly: The orbit's true or mean anomaly in degrees
+     * </ul>
      */
     public OrbitalElements(String timestamp, double semiMajorAxis, double eccentricity, double inclination, double rightAscension
             , double argOfPerigee, double anomaly) {
@@ -51,17 +51,17 @@ public class OrbitalElements {
     /**
      * A class constructor that takes a timestamp in the YYYY-MM-DDTHH:MM:SS.sss format, each orbital element as a double
      * value, the drag coefficient and both the first and second derivative of the Mean Motion in this order and format:
-     *  <ul>
-     *  <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
-     *  <li> Eccentricity: The orbit's eccentricity
-     *  <li> Inclination: The orbit's inclination in degrees
-     *  <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
-     *  <li> Argument of Perigee: The orbits Argument of Perigee in degrees
-     *  <li> Anomaly: The orbit's true or mean anomaly in degrees
-     *  <li> Drag coefficient (B STAR) in radii^-1
-     *  <li> Mean motion first derivative in revs/day
-     *  <li> Mean motion second derivative in revs/day^3
-     *  </ul>
+     * <ul>
+     * <li> Semi Major Axis: The orbit's SemiMajor Axis in meters.
+     * <li> Eccentricity: The orbit's eccentricity
+     * <li> Inclination: The orbit's inclination in degrees
+     * <li> Right ascension: The orbit's Right Ascension of the Ascending Node in degrees
+     * <li> Argument of Perigee: The orbits Argument of Perigee in degrees
+     * <li> Anomaly: The orbit's true or mean anomaly in degrees
+     * <li> Drag coefficient (B STAR) in radii^-1
+     * <li> Mean motion first derivative in revs/day
+     * <li> Mean motion second derivative in revs/day^3
+     * </ul>
      *
      * @see <a href="http://spaceflight.nasa.gov/realdata/sightings/SSapplications/Post/JavaSSOP/SSOP_Help/tle_def.html">NORAD TLE</a>
      */
@@ -191,4 +191,9 @@ public class OrbitalElements {
         return this.timestamp;
     }
 
+    @Override
+    public String toString() {
+        return timestamp + "," + semiMajorAxis + "," + eccentricity + "," + inclination + "," + rightAscension +
+                "," + argOfPerigee + "," + anomaly;
+    }
 }

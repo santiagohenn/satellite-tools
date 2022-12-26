@@ -46,11 +46,11 @@ public class Simulation implements Runnable {
     /**
      * Initial properties and extrapolation variables and orekit data path
      * */
-    private final Properties prop = Utils.loadProperties("sim.properties");
-    private final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
+    private Properties prop = Utils.loadProperties("sim.properties");
+    private DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
     private Frame inertialFrame = FramesFactory.getTEME();//.getEME2000();
     private BodyShape earth;
-    private final double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
+    private double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
     /**
      * Mutable variables
