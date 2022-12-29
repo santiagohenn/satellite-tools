@@ -24,7 +24,7 @@ import org.orekit.utils.IERSConventions;
 import org.orekit.utils.PVCoordinates;
 import org.orekit.utils.TimeStampedPVCoordinates;
 import satellite.tools.assets.Asset;
-import satellite.tools.assets.entities.Device;
+import satellite.tools.assets.entities.Position;
 import satellite.tools.assets.entities.Satellite;
 import satellite.tools.structures.Ephemeris;
 import satellite.tools.structures.Interval;
@@ -62,7 +62,7 @@ public class Simulation {
     private TopocentricFrame topocentricFrame;
     private TLEPropagator tlePropagator;
     private Satellite satellite;
-    private Device device;
+    private Position device;
     private List<Interval> intervalList = new ArrayList<>();
     private List<Ephemeris> ephemerisList = new ArrayList<>();
     private Date contact = new Date();
@@ -101,7 +101,7 @@ public class Simulation {
     /**
      * Constructor that receives a Satellite object and a Device object.
      */
-    public Simulation(Device device, Satellite satellite) {
+    public Simulation(Position device, Satellite satellite) {
         loadOrekit();
         setDevice(device);
         setSatellite(satellite);
@@ -111,7 +111,7 @@ public class Simulation {
      * A Class constructor that configures the main parameters needed for a pair device-satellite on a scenario (replaces
      * default values)
      */
-    public Simulation(String timeStart, String timeEnd, Device device, Satellite satellite, double step, double th) {
+    public Simulation(String timeStart, String timeEnd, Position device, Satellite satellite, double step, double th) {
         loadOrekit();
         this.time1 = timeStart;
         this.time2 = timeEnd;
@@ -195,7 +195,7 @@ public class Simulation {
         return satellite;
     }
 
-    public Device getDevice() {
+    public Position getDevice() {
         return device;
     }
 
@@ -215,20 +215,20 @@ public class Simulation {
         return intervalList;
     }
 
-    public void setAssets(Device device, Satellite satellite) {
+    public void setAssets(Position device, Satellite satellite) {
         setDevice(device);
         setSatellite(satellite);
     }
 
     public void setAsset(Asset asset) {
-        if (asset.getClass().isAssignableFrom(Device.class)) {
-            setDevice((Device) asset);
+        if (asset.getClass().isAssignableFrom(Position.class)) {
+            setDevice((Position) asset);
         } else if (asset.getClass().isAssignableFrom(Satellite.class)) {
             setSatellite((Satellite) asset);
         }
     }
 
-    public void setDevice(Device device) {
+    public void setDevice(Position device) {
         this.device = device;
         GeodeticPoint geodeticPoint = new GeodeticPoint(device.getLatRad(), device.getLonRad(), device.getHeight());
         this.topocentricFrame = new TopocentricFrame(earth, geodeticPoint, device.getName());
