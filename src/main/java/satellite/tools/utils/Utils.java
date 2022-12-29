@@ -61,7 +61,7 @@ public class Utils {
      *
      * @return List<Asset>
      */
-    public static List<Position> devicesFromFile(String fileName) {
+    public static List<Position> positionsFromFile(String fileName) {
 
         List<Position> assetList = new ArrayList<>();
         var file = new File(fileName);
@@ -71,7 +71,11 @@ public class Utils {
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("//") && line.length() > 0) {
                     var data = line.split(",");
-                    assetList.add(new Position(id++, data[0], Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3])*1000));
+                    if (data.length == 4) {
+                        assetList.add(new Position(id++, data[0], Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3])));
+                    } else if (data.length == 3) {
+                        assetList.add(new Position(id++, Double.parseDouble(data[0]), Double.parseDouble(data[1]), Double.parseDouble(data[2])));
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
