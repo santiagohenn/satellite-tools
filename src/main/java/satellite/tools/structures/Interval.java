@@ -87,6 +87,22 @@ public class Interval extends Event {
         return toAssets.get(0);
     }
 
+    public void setFirstTo(int id) {
+        if (!toAssets.isEmpty()) {
+            toAssets.set(0, id);
+        } else {
+            toAssets.add(0, id);
+        }
+    }
+
+    public void setFirstFrom(int id) {
+        if (!fromAssets.isEmpty()) {
+            fromAssets.set(0, id);
+        } else {
+            fromAssets.add(0, id);
+        }
+    }
+
     public void addFrom(Integer indexFrom) {
         this.fromAssets.add(indexFrom);
     }
