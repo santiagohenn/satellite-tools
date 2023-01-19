@@ -397,7 +397,7 @@ public class Simulation {
 
         PVCoordinates pvCoordinatesInertial = tlePropagator.propagate(absoluteDate).getPVCoordinates();
         TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinatesInertial);
-        Transform inertial2fixed = inertialFrame.getTransformTo(FramesFactory.getITRF(IERSConventions.IERS_2010, true), absoluteDate);
+        Transform inertial2fixed = inertialFrame.getTransformTo(FramesFactory.getITRF(IERSConventions.IERS_2010, false), absoluteDate);
         PVCoordinates pvCoordinatesFixed = inertial2fixed.transformPVCoordinates(timeStampedPVCoordinates);
 
         Ephemeris eph = new Ephemeris();
@@ -406,7 +406,7 @@ public class Simulation {
                 pvCoordinatesFixed.getPosition().getY(),
                 pvCoordinatesFixed.getPosition().getZ());
 
-        eph.setVel(timeStampedPVCoordinates.getVelocity().getX(),
+        eph.setVel(pvCoordinatesFixed.getVelocity().getX(),
                 timeStampedPVCoordinates.getVelocity().getY(),
                 timeStampedPVCoordinates.getVelocity().getZ());
 
