@@ -395,14 +395,16 @@ public class Simulation {
 
     public Ephemeris computeFixedEphemeris(AbsoluteDate absoluteDate) {
 
-        PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
-        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
+        PVCoordinates pvCoordinatesInertial = tlePropagator.propagate(absoluteDate).getPVCoordinates();
+        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinatesInertial);
+        Transform inertial2fixed = inertialFrame.getTransformTo(FramesFactory.getITRF(IERSConventions.IERS_2010, true), absoluteDate);
+        PVCoordinates pvCoordinatesFixed = inertial2fixed.transformPVCoordinates(timeStampedPVCoordinates);
 
         Ephemeris eph = new Ephemeris();
 
-        eph.setPos(timeStampedPVCoordinates.getPosition().getX(),
-                timeStampedPVCoordinates.getPosition().getY(),
-                timeStampedPVCoordinates.getPosition().getZ());
+        eph.setPos(pvCoordinatesFixed.getPosition().getX(),
+                pvCoordinatesFixed.getPosition().getY(),
+                pvCoordinatesFixed.getPosition().getZ());
 
         eph.setVel(timeStampedPVCoordinates.getVelocity().getX(),
                 timeStampedPVCoordinates.getVelocity().getY(),
@@ -422,7 +424,7 @@ public class Simulation {
 
     }
 
-    public Ephemeris getECEFVectorAt(AbsoluteDate absoluteDate) {
+    public Ephemeris computePositionVectorAt(AbsoluteDate absoluteDate) {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
 
