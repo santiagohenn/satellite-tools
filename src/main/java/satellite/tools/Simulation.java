@@ -145,6 +145,9 @@ public class Simulation {
 
     public void setFixedFrame(Frame fixedFrame) {
         this.fixedFrame = fixedFrame;
+        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
+                Constants.WGS84_EARTH_FLATTENING,
+                fixedFrame);
     }
 
     public void setEarthFrame(Frame frame) {
