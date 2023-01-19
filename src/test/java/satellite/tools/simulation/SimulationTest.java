@@ -101,7 +101,7 @@ public class SimulationTest {
         Simulation simulation = new Simulation(satellite);
         Position device = new Position(15, 15, 0.3);
         simulation.setDevice(device);
-        Ephemeris ephemeris = simulation.computePVDAt("2025-03-20T12:00:00.000");
+        Ephemeris ephemeris = simulation.computeTopocentricEphemeris("2025-03-20T12:00:00.000");
         assertNotNull(ephemeris);
     }
 
@@ -112,7 +112,7 @@ public class SimulationTest {
         Satellite satellite = new Satellite(orbitalElements);
         Position device = new Position(15, 15, 3);
         Simulation simulation = new Simulation("2022-03-20T01:00:00.000", "2022-03-20T23:00:00.000", device, satellite, 60, 5);
-        Ephemeris ephemeris = simulation.computePVDAt("2022-03-20T03:00:00.000");
+        Ephemeris ephemeris = simulation.computeTopocentricEphemeris("2022-03-20T03:00:00.000");
         System.out.println("time(unix ts),posX,posY,posZ,velX,velY,velZ,range[m],doppler[m/s]");
         System.out.println(ephemeris);
         assertNotNull(ephemeris);

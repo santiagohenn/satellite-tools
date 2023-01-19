@@ -48,7 +48,8 @@ public class Simulation {
      * */
     private Properties prop = Utils.loadProperties("sim.properties");
     private DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-    private Frame inertialFrame = FramesFactory.getEME2000();
+    private Frame inertialFrame;
+    private Frame fixedFrame;
     private BodyShape earth;
     private double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
@@ -79,14 +80,10 @@ public class Simulation {
      * Orekit path specified constructor
      * **/
     public Simulation(String orekitPath) {
-
         File orekitFile = Utils.loadDirectory(orekitPath);
         manager.addProvider(new DirectoryCrawler(orekitFile));
-        Log.debug("Manager loaded from: " + orekitPath);
-        Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
-        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-                Constants.WGS84_EARTH_FLATTENING,
-                earthFrame);
+        Log.debug("Orekit data provider loaded from: " + orekitPath);
+        setDefaultFrames();
     }
 
     /**
@@ -131,21 +128,29 @@ public class Simulation {
         File orekitFile = Utils.loadDirectory(orekitPath);
         manager.addProvider(new DirectoryCrawler(orekitFile));
         Log.debug("Manager loaded");
-        Frame earthFrame = FramesFactory.getITRF(IERSConventions.IERS_2010, true);
+        setDefaultFrames();
+    }
+
+    private void setDefaultFrames() {
+        setInertialFrame(FramesFactory.getEME2000());
+        setFixedFrame(FramesFactory.getITRF(IERSConventions.IERS_2010, true));
         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                 Constants.WGS84_EARTH_FLATTENING,
-                earthFrame);
-
+                fixedFrame);
     }
 
     public void setInertialFrame(Frame inertialFrame) {
         this.inertialFrame = inertialFrame;
     }
 
-    public void setEarthFrame(Frame earthFrame) {
+    public void setFixedFrame(Frame fixedFrame) {
+        this.fixedFrame = fixedFrame;
+    }
+
+    public void setEarthFrame(Frame frame) {
         earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
                 Constants.WGS84_EARTH_FLATTENING,
-                earthFrame);
+                frame);
     }
 
     public void setParams(String timeStart, String timeEnd, double step, double th) {
@@ -296,7 +301,6 @@ public class Simulation {
         }
     }
 
-    // * Generate TEMEOfDate Position - Velocity vectors * //
     public void computePVD() {
         propagateAndComputePVD(Utils.stamp2AD(time1), Utils.stamp2AD(time2), this.step);
     }
@@ -317,16 +321,16 @@ public class Simulation {
         propagateAndComputePVD(Utils.stamp2AD(startTime), Utils.stamp2AD(endTime), stepInSeconds);
     }
 
-    public Ephemeris computePVDAt(long timestamp, double step) {
+    public Ephemeris computeTopocentricEphemeris(long timestamp, double step) {
         this.step = step;
-        return computePVDAt(Utils.unix2stamp(timestamp));
+        return computeTopocentricEphemeris(Utils.unix2stamp(timestamp));
     }
 
-    public Ephemeris computePVDAt(String timestamp) {
-        return computePVDAt(Utils.stamp2AD(timestamp));
+    public Ephemeris computeTopocentricEphemeris(String timestamp) {
+        return computeTopocentricEphemeris(Utils.stamp2AD(timestamp));
     }
 
-    public Ephemeris computePVDAt(AbsoluteDate absoluteDate) {
+    public Ephemeris computeTopocentricEphemeris(AbsoluteDate absoluteDate) {
         PVCoordinates pvInert = tlePropagator.propagate(absoluteDate).getPVCoordinates();
         var pvCoordinates = inertialFrame.getTransformTo(topocentricFrame, absoluteDate).transformPVCoordinates(pvInert);
         return toEphemeris(absoluteDate, pvCoordinates);
@@ -356,35 +360,6 @@ public class Simulation {
         lastSimTime = System.currentTimeMillis() - t0;
     }
 
-    public Ephemeris computeEphemerisKm(AbsoluteDate absoluteDate) {
-
-        PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
-        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
-
-        Frame bodyFrame = earth.getBodyFrame();
-        Transform t = inertialFrame.getTransformTo(bodyFrame, timeStampedPVCoordinates.getDate());
-        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
-
-        double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
-        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
-        double height = timeStampedPVCoordinates.getPosition().getNorm();
-
-        Ephemeris eph = new Ephemeris();
-
-        eph.setPos(pvCoordinates.getPosition().getX() / 1000.0,
-                pvCoordinates.getPosition().getY() / 1000.0,
-                pvCoordinates.getPosition().getZ() / 1000.0);
-
-        eph.setVel(pvCoordinates.getVelocity().getX() / 1000.0,
-                pvCoordinates.getVelocity().getY() / 1000.0,
-                pvCoordinates.getVelocity().getZ() / 1000.0);
-
-        eph.setSSP(delta, alpha, height);
-
-        return eph;
-
-    }
-
     public Ephemeris computeFixedEphemerisKm(AbsoluteDate absoluteDate) {
 
         Ephemeris e = computeFixedEphemeris(absoluteDate);
@@ -397,8 +372,8 @@ public class Simulation {
 
         PVCoordinates pvCoordinatesInertial = tlePropagator.propagate(absoluteDate).getPVCoordinates();
         TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinatesInertial);
-        Transform inertial2fixed = inertialFrame.getTransformTo(FramesFactory.getITRF(IERSConventions.IERS_2010, false), absoluteDate);
-        PVCoordinates pvCoordinatesFixed = inertial2fixed.transformPVCoordinates(timeStampedPVCoordinates);
+        Transform inertial2fixed = inertialFrame.getTransformTo(fixedFrame, absoluteDate);
+        TimeStampedPVCoordinates pvCoordinatesFixed = inertial2fixed.transformPVCoordinates(timeStampedPVCoordinates);
 
         Ephemeris eph = new Ephemeris();
 
@@ -407,12 +382,10 @@ public class Simulation {
                 pvCoordinatesFixed.getPosition().getZ());
 
         eph.setVel(pvCoordinatesFixed.getVelocity().getX(),
-                timeStampedPVCoordinates.getVelocity().getY(),
-                timeStampedPVCoordinates.getVelocity().getZ());
+                pvCoordinatesFixed.getVelocity().getY(),
+                pvCoordinatesFixed.getVelocity().getZ());
 
-        Frame bodyFrame = earth.getBodyFrame();
-        Transform t = inertialFrame.getTransformTo(bodyFrame, absoluteDate);
-        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
+        timeStampedPVCoordinates = earth.projectToGround(pvCoordinatesFixed, inertialFrame);
 
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta =  timeStampedPVCoordinates.getPosition().getDelta();
@@ -424,7 +397,7 @@ public class Simulation {
 
     }
 
-    public Ephemeris computePositionVectorAt(AbsoluteDate absoluteDate) {
+    public Ephemeris computeInertialEphemeris(AbsoluteDate absoluteDate) {
 
         PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
 
@@ -432,6 +405,10 @@ public class Simulation {
         eph.setPos(pvCoordinates.getPosition().getX(),
                 pvCoordinates.getPosition().getY(),
                 pvCoordinates.getPosition().getZ());
+
+        eph.setVel(pvCoordinates.getVelocity().getX(),
+                pvCoordinates.getVelocity().getY(),
+                pvCoordinates.getVelocity().getZ());
 
         return eph;
 
