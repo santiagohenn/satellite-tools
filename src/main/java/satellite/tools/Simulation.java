@@ -48,7 +48,7 @@ public class Simulation {
      * */
     private Properties prop = Utils.loadProperties("sim.properties");
     private DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
-    private Frame inertialFrame = FramesFactory.getEME2000(); // .getTEME();
+    private Frame inertialFrame = FramesFactory.getEME2000();
     private BodyShape earth;
     private double TH_DETECTION = Double.parseDouble((String) prop.get("th_detection"));
 
@@ -378,6 +378,43 @@ public class Simulation {
         eph.setVel(pvCoordinates.getVelocity().getX() / 1000.0,
                 pvCoordinates.getVelocity().getY() / 1000.0,
                 pvCoordinates.getVelocity().getZ() / 1000.0);
+
+        eph.setSSP(delta, alpha, height);
+
+        return eph;
+
+    }
+
+    public Ephemeris computeFixedEphemerisKm(AbsoluteDate absoluteDate) {
+
+        Ephemeris e = computeFixedEphemeris(absoluteDate);
+        e.setPos(e.getPosX() / 1000.0, e.getPosY() / 1000.0, e.getPosZ() / 1000.0);
+        return e;
+
+    }
+
+    public Ephemeris computeFixedEphemeris(AbsoluteDate absoluteDate) {
+
+        PVCoordinates pvCoordinates = tlePropagator.propagate(absoluteDate).getPVCoordinates();
+        TimeStampedPVCoordinates timeStampedPVCoordinates = new TimeStampedPVCoordinates(absoluteDate, pvCoordinates);
+
+        Ephemeris eph = new Ephemeris();
+
+        eph.setPos(timeStampedPVCoordinates.getPosition().getX(),
+                timeStampedPVCoordinates.getPosition().getY(),
+                timeStampedPVCoordinates.getPosition().getZ());
+
+        eph.setVel(timeStampedPVCoordinates.getVelocity().getX(),
+                timeStampedPVCoordinates.getVelocity().getY(),
+                timeStampedPVCoordinates.getVelocity().getZ());
+
+        Frame bodyFrame = earth.getBodyFrame();
+        Transform t = inertialFrame.getTransformTo(bodyFrame, absoluteDate);
+        timeStampedPVCoordinates = earth.projectToGround(t.transformPVCoordinates(timeStampedPVCoordinates), inertialFrame);
+
+        double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
+        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
+        double height = timeStampedPVCoordinates.getPosition().getNorm();
 
         eph.setSSP(delta, alpha, height);
 
