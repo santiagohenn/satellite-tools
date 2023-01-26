@@ -45,9 +45,9 @@ public class Simulation {
 
     /**
      * Initial properties and extrapolation variables and orekit data path
-     * */
+     */
     private Properties prop = Utils.loadProperties("sim.properties");
-    private DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
+    private static final DataProvidersManager manager = DataContext.getDefault().getDataProvidersManager();
     private Frame inertialFrame;
     private Frame fixedFrame;
     private BodyShape earth;
@@ -55,11 +55,11 @@ public class Simulation {
 
     /**
      * Mutable variables
-     * **/
+     **/
     private String time1 = (String) prop.get("start_date");
     private String time2 = (String) prop.get("end_date");
-    private double step = Double.parseDouble((String) prop.get("time_step"));
-    private double th = Math.toRadians(Double.parseDouble((String) prop.get("visibility_threshold")));
+    private double timeStepSeconds = Double.parseDouble((String) prop.get("time_step"));
+    private double visibilityThreshold = Math.toRadians(Double.parseDouble((String) prop.get("visibility_threshold")));
     private TopocentricFrame topocentricFrame;
     private TLEPropagator tlePropagator;
     private Satellite satellite;
@@ -71,14 +71,14 @@ public class Simulation {
 
     /**
      * Default constructor
-     * **/
+     **/
     public Simulation() {
         loadOrekit();
     }
 
     /**
      * Orekit path specified constructor
-     * **/
+     **/
     public Simulation(String orekitPath) {
         File orekitFile = Utils.loadDirectory(orekitPath);
         manager.addProvider(new DirectoryCrawler(orekitFile));
@@ -110,33 +110,35 @@ public class Simulation {
      */
     public Simulation(String timeStart, String timeEnd, Position device, Satellite satellite, double step, double th) {
         loadOrekit();
-        this.time1 = timeStart;
-        this.time2 = timeEnd;
         setSatellite(satellite);
         setDevice(device);
-        this.step = step;
-        this.th = Math.toRadians(th);
+        setParams(timeStart, timeEnd, step, th);
     }
 
     public void loadOrekit() {
-        Log.debug("Orekit data loading");
-        String orekitPath = (String) prop.get("orekit_data_path");
-        if (orekitPath == null || orekitPath.isBlank() || orekitPath.isEmpty()) {
-            Log.error("Insert orekit_data_path in properties or use the corresponding Orekit-specified constructor.");
-            return;
+
+        if (manager.getLoadedDataNames().stream()
+                .allMatch(s -> s.contains("itrf.versions.conf") || s.contains("tai-utc.dat") || s.contains("finals2000A.all"))) {
+            Log.debug("Loading orbital data: itrf.versions.conf, tai-utc.dat, finals2000A.all");
+            String orekitPath = (String) prop.get("orekit_data_path");
+            if (orekitPath == null || orekitPath.isBlank() || orekitPath.isEmpty()) {
+                Log.error("Insert orekit_data_path in properties or use the corresponding path-specified constructor.");
+                throw new RuntimeException("Insert orekit_data_path in properties or use the corresponding path-specified constructor.");
+            }
+            File orekitFile = Utils.loadDirectory(orekitPath);
+            manager.addProvider(new DirectoryCrawler(orekitFile));
+            Log.debug("Loaded datasets: " + manager.getLoadedDataNames());
         }
-        File orekitFile = Utils.loadDirectory(orekitPath);
-        manager.addProvider(new DirectoryCrawler(orekitFile));
-        Log.debug("Manager loaded");
-        setDefaultFrames();
+
+        if (inertialFrame == null || fixedFrame == null || earth == null) {
+            setDefaultFrames();
+        }
+
     }
 
     private void setDefaultFrames() {
         setInertialFrame(FramesFactory.getEME2000());
         setFixedFrame(FramesFactory.getITRF(IERSConventions.IERS_2010, true));
-        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-                Constants.WGS84_EARTH_FLATTENING,
-                fixedFrame);
     }
 
     public void setInertialFrame(Frame inertialFrame) {
@@ -150,17 +152,19 @@ public class Simulation {
                 fixedFrame);
     }
 
-    public void setEarthFrame(Frame frame) {
-        earth = new OneAxisEllipsoid(Constants.WGS84_EARTH_EQUATORIAL_RADIUS,
-                Constants.WGS84_EARTH_FLATTENING,
-                frame);
-    }
-
-    public void setParams(String timeStart, String timeEnd, double step, double th) {
+    public void setParams(String timeStart, String timeEnd, double step, double visibilityThreshold) {
         this.time1 = timeStart;
         this.time2 = timeEnd;
-        this.step = step;
-        this.th = Math.toRadians(th);
+        this.timeStepSeconds = step;
+        setVisibilityThreshold(visibilityThreshold);
+    }
+
+    public double getVisibilityThreshold() {
+        return visibilityThreshold;
+    }
+
+    public void setVisibilityThreshold(double visibilityThreshold) {
+        this.visibilityThreshold = Math.toRadians(visibilityThreshold);
     }
 
     public String getStartTime() {
@@ -261,20 +265,20 @@ public class Simulation {
         return sum;
     }
 
-    public void setStep(double step) {
-        this.step = step;
+    public void setTimeStepSeconds(double timeStepSeconds) {
+        this.timeStepSeconds = timeStepSeconds;
     }
 
-    @SuppressWarnings("squid:S2184")
+    //    @SuppressWarnings("squid:S2184")
     public void computeAccess() {
 
         long t0 = System.currentTimeMillis();
 
-        intervalList.clear();
+        intervalList = new ArrayList<>();
 
         contact.setTime(Utils.stamp2unix(time1));
-        EventDetector elevDetector = new ElevationDetector(step, TH_DETECTION, topocentricFrame).
-                withConstantElevation(th).
+        EventDetector elevDetector = new ElevationDetector(timeStepSeconds, TH_DETECTION, topocentricFrame).
+                withConstantElevation(visibilityThreshold).
                 withHandler(
                         (s, detector, increasing) -> {
                             addInterval(s, increasing);
@@ -305,11 +309,11 @@ public class Simulation {
     }
 
     public void computePVD() {
-        propagateAndComputePVD(Utils.stamp2AD(time1), Utils.stamp2AD(time2), this.step);
+        propagateAndComputePVD(Utils.stamp2AD(time1), Utils.stamp2AD(time2), this.timeStepSeconds);
     }
 
     public void computePVDBetween(long startTime, long endTime) {
-        computePVDBetween(startTime, endTime, this.step);
+        computePVDBetween(startTime, endTime, this.timeStepSeconds);
     }
 
     public void computePVDBetween(long startTime, long endTime, double stepInSeconds) {
@@ -317,7 +321,7 @@ public class Simulation {
     }
 
     public void computePVDBetween(String startTime, String endTime) {
-        computePVDBetween(startTime, endTime, this.step);
+        computePVDBetween(startTime, endTime, this.timeStepSeconds);
     }
 
     public void computePVDBetween(String startTime, String endTime, double stepInSeconds) {
@@ -325,7 +329,7 @@ public class Simulation {
     }
 
     public Ephemeris computeTopocentricEphemeris(long timestamp, double step) {
-        this.step = step;
+        this.timeStepSeconds = step;
         return computeTopocentricEphemeris(Utils.unix2stamp(timestamp));
     }
 
@@ -391,7 +395,7 @@ public class Simulation {
         timeStampedPVCoordinates = earth.projectToGround(pvCoordinatesFixed, inertialFrame);
 
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
-        double delta =  timeStampedPVCoordinates.getPosition().getDelta();
+        double delta = timeStampedPVCoordinates.getPosition().getDelta();
         double height = timeStampedPVCoordinates.getPosition().getNorm();
 
         eph.setSSP(delta, alpha, height);
@@ -451,6 +455,10 @@ public class Simulation {
 
     public Properties getProperties() {
         return prop;
+    }
+
+    public double getTimeStepSeconds() {
+        return timeStepSeconds;
     }
 
     public void run() {
