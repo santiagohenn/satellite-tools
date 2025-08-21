@@ -6,7 +6,7 @@ import satellite.tools.utils.Log;
 public class LoggerTest {
 
     @Test
-    public void LoggerTest() {
+    public void LoggerLevelTest() {
 
         Log.logConfigs();
         Log.debug("Testing log - level Debug");

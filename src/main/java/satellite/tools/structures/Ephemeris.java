@@ -192,6 +192,14 @@ public class Ephemeris {
         return longitude;
     }
 
+    public double getAzimuth() {
+        return azimuth;
+    }
+
+    public double getElevation() {
+        return elevation;
+    }
+
     @Override
     public String toString() {
         return time + "," + posX + "," + posY + "," + posZ + "," + velX + ","
