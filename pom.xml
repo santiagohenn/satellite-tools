@@ -11,27 +11,46 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Satellite orbit propagation interface</description>
     <packaging>jar</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.orekit</groupId>
             <artifactId>orekit</artifactId>
-            <version>11.1.1</version>
+            <version>13.1</version>
         </dependency>
         <dependency>
             <groupId>org.hipparchus</groupId>
             <artifactId>hipparchus-geometry</artifactId>
-            <version>2.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.hipparchus</groupId>
             <artifactId>hipparchus-core</artifactId>
-            <version>2.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.hipparchus</groupId>
             <artifactId>hipparchus-ode</artifactId>
-            <version>2.0</version>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hipparchus</groupId>
+            <artifactId>hipparchus-fitting</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hipparchus</groupId>
+            <artifactId>hipparchus-optim</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hipparchus</groupId>
+            <artifactId>hipparchus-filtering</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hipparchus</groupId>
+            <artifactId>hipparchus-stat</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

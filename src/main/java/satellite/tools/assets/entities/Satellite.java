@@ -111,6 +111,14 @@ public class Satellite extends Asset {
                 anomaly, dragCoefficient, meanMotionFirstDerivative, meanMotionSecondDerivative));
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public int getSatelliteNumber() {
         return satelliteNumber;
     }
