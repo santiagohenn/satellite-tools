@@ -193,9 +193,6 @@ public class SatElset implements Serializable {
      */
     public SatElset(SatElset elset) {
         name = new String(elset.getName());
-        if (name == null) {
-            name = " ";
-        }
         // copy data
         this.argPerigee = elset.argPerigee;
         this.bstar = elset.bstar;
