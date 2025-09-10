@@ -8,7 +8,7 @@ import satellite.tools.exceptions.SatElsetException;
 import satellite.tools.structures.Ephemeris;
 import satellite.tools.structures.SatElset;
 import satellite.tools.assets.Asset;
-import satellite.tools.assets.entities.Device;
+import satellite.tools.assets.entities.Position;
 import satellite.tools.assets.entities.Satellite;
 import satellite.tools.structures.OrbitalElements;
 
@@ -61,9 +61,9 @@ public class Utils {
      *
      * @return List<Asset>
      */
-    public static List<Device> devicesFromFile(String fileName) {
+    public static List<Position> devicesFromFile(String fileName) {
 
-        List<Device> assetList = new ArrayList<>();
+        List<Position> assetList = new ArrayList<>();
         var file = new File(fileName);
         try (var fr = new FileReader(file); var br = new BufferedReader(fr)) {
             String line;
@@ -71,7 +71,7 @@ public class Utils {
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("//") && line.length() > 0) {
                     var data = line.split(",");
-                    assetList.add(new Device(id++, data[0], Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3])*1000));
+                    assetList.add(new Position(id++, data[0], Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3])*1000));
                 }
             }
         } catch (FileNotFoundException e) {

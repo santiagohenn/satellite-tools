@@ -12,14 +12,13 @@ import java.util.Locale;
  */
 public class Satellite extends Asset {
 
-    private String name = "";
     private String tle1 = "";
     private String tle2 = "";
     private int satelliteNumber = 1;
     private char satelliteClassification = 'U';
     private int launchNumber = 76;
     private String launchPiece = "A";
-    private int launchYear = 2018;
+    private int launchYear = 2022;
     private double firstBallistic;
     private double secondBallistic;
     private double radPressure;
@@ -39,7 +38,7 @@ public class Satellite extends Asset {
      * Class constructor specifying the orbital elements of the satellite
      * */
     public Satellite(OrbitalElements elements) {
-        this.name = "unknown";
+        super.setName("unknown");
         this.elements = elements;
     }
     /**
@@ -48,6 +47,9 @@ public class Satellite extends Asset {
     public Satellite(int id, OrbitalElements elements) {
         this.setId(id);
         this.elements = elements;
+        this.satelliteNumber = 9999 + id;
+        this.elementsNumber = 999;
+        this.revolutionNumber = 1;
     }
 
     /**
@@ -85,7 +87,7 @@ public class Satellite extends Asset {
      * Class constructor from NORAD's Two Line Elements
      * */
     public Satellite(String tle1, String tle2) {
-        this.name = tle1.substring(2, 9);
+        super.setName(tle1.substring(2, 9));
         setTLE(tle1, tle2);
     }
 
