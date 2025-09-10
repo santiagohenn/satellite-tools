@@ -206,6 +206,10 @@ public class Ephemeris {
         return elevation;
     }
 
+    public double getHeight() {
+        return height;
+    }
+
     @Override
     public String toString() {
         return time + "," + posX + "," + posY + "," + posZ + "," + velX + ","

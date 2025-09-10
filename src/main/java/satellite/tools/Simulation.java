@@ -396,10 +396,9 @@ public class Simulation {
 
         double alpha = timeStampedPVCoordinates.getPosition().getAlpha();
         double delta = timeStampedPVCoordinates.getPosition().getDelta();
-        // TODO: add this if needed
-        // double height = timeStampedPVCoordinates.getPosition().getNorm();
+        double height = timeStampedPVCoordinates.getPosition().getNorm();
 
-        eph.setSSP(delta, alpha);
+        eph.setSSP(delta, alpha, height);
 
         return eph;
 
