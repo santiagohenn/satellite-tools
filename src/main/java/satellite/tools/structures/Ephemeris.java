@@ -11,7 +11,6 @@ public class Ephemeris {
     private double velZ;
     private double latitude;
     private double longitude;
-    private double height;
     private double azimuth;
     private double elevation;
     private double range;
@@ -184,10 +183,9 @@ public class Ephemeris {
         return dopplerShift;
     }
 
-    public void setSSP(double latitude, double longitude, double height) {
+    public void setSSP(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.height = height;
     }
 
     public double getLatitude() {
